@@ -1,0 +1,57 @@
+{% extends "moviesapp/base.html" %}
+
+{% block title %}Movies{% endblock %}
+
+
+{% block content %}
+<style>
+ul.list-unstyled, ul.list-unstyled li {
+    list-style: none !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <ul class="list-unstyled">
+                {% for movie in movies %}
+                    <li class="mb-4">
+                        <div class="d-flex align-items-start">
+                            {% if movie.picture %}
+                                <img src="{{ movie.picture.image_path }}" class="me-3" style="max-width: 150px;" alt="{{ movie.title }}">
+                            {% endif %}
+                            <div>
+                                <a href="/movies/{{ movie.id }}/"><strong>{{ movie.title }}</strong></a> ({{ movie.release_date }})<br>
+                                {{ movie.description }}<br>
+                                <small class="text-muted">
+                                    Жанр: {{ movie.genre }}<br>
+                                    Размер: {{ movie.size }} МБ<br>
+                                    {% if movie.actors %}
+                                        Актеры: {{ movie.actors|join:", " }}<br>
+                                    {% endif %}
+                                    {% if movie.tags %}
+                                        Теги: {{ movie.tags|join:", " }}
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li>No movies found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <div class="tags-box">
+                <h2>Top Ten tags</h2>
+                <div class="tag-item">
+                    {% for tag in tags %}
+                        <a class="tag d-block mb-2" href="/tag/{{ tag.name }}">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

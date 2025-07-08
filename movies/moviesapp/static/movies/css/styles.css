@@ -1,0 +1,23 @@
+ul.list-unstyled, ul.list-unstyled li {
+    list-style: none !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+header {
+            margin-bottom: 2rem;
+}
+nav {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    color: #0a0a0a;
+}
+main {
+    min-height: 60vh;
+    padding: 2rem 0;
+}
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #0a0a0a;
+}

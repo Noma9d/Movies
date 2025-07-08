@@ -1,0 +1,18 @@
+{% extends "moviesapp/base.html" %}
+
+{% load static %}
+
+{% block title %}Фильм не найден{% endblock %}
+
+
+{% block content %}
+<div class="not-found-container" style="display: inline-block; background: #fff; padding: 40px 60px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; margin-top: 100px;">
+    <div class="not-found-title" style="font-size: 2em; margin-bottom: 20px; color: #c0392b;">
+        Фильм не найден
+    </div>
+    <div class="not-found-message" style="font-size: 1.2em;">
+        К сожалению, запрошенный фильм не найден.<br>
+        <a href="{% url 'moviesapp:main' %}" style="color: #2980b9; text-decoration: none;">Вернуться к списку фильмов</a>
+    </div>
+</div>
+{% endblock %}

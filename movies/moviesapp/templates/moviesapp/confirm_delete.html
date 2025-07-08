@@ -1,0 +1,17 @@
+{% extends "moviesapp/base.html" %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
+    <div class="card shadow p-4 mb-4 bg-white rounded" style="max-width: 500px; width: 100%;">
+        <h2 class="mb-3 text-center">Удалить фильм</h2>
+        <p class="text-center">Вы уверены, что хотите удалить фильм <strong>{{ movie.title }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-flex flex-column gap-2 align-items-center mt-4">
+                <button type="submit" class="btn btn-danger">Удалить</button>
+                <a href="/movies/{{ movie.id }}/" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

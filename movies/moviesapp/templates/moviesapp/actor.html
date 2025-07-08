@@ -1,0 +1,63 @@
+{% extends "moviesapp/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ actor.name }}</h1>
+        <img src="{{ actor.photo }}" alt="{{ actor.name }}" class="actor-photo">
+        <p><strong>Date of Birth:</strong> {{ actor.date_of_birth }}</p>
+        <p><strong>Biography:</strong> {{ actor.biography }}</p>
+
+        <h2>Movies</h2>
+        <ul class="movie-list
+">
+            {% for movie in actor.movies.all %}
+                <li>
+                    <a href="{#}">{{ movie.title }}</a>
+                    <span class="release-date">({{ movie.release_date }})</span>
+                </li>
+            {% empty %}
+                <li>No movies found for this actor.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+        .actor-photo {
+            max-width: 200px;
+            border-radius: 4px;
+        }
+        .movie-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .movie-list li {
+            margin-bottom: 10px;
+        }
+        .release-date {
+            color: #777;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #1976d2;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #1565c0;
+        }
+    </style>
+{% endblock %}

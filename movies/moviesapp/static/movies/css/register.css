@@ -1,0 +1,61 @@
+.register-card {
+    max-width: 350px;
+    margin: 40px auto;
+    padding: 32px 28px 20px 28px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.register-card h2 {
+    margin-bottom: 18px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.form-group {
+    width: 100%;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+}
+.form-group label {
+    margin-bottom: 4px;
+    font-size: 0.97rem;
+    color: #333;
+}
+.form-group input {
+    padding: 7px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+.btn-primary {
+    width: 100%;
+    padding: 9px 0;
+    background: #3f51b5;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.08rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+.btn-primary:hover {
+    background: #283593;
+}
+.login-link {
+    margin-top: 14px;
+    text-align: center;
+}
+.login-link a {
+    color: #3f51b5;
+    text-decoration: none;
+    font-size: 0.98rem;
+}
+.login-link a:hover {
+    text-decoration: underline;
+}

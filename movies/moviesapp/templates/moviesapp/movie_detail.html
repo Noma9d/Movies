@@ -1,0 +1,36 @@
+{% extends "moviesapp/base.html" %}
+
+{% load static %}
+
+{% block title %}{{ movie.title }} - Детали фильма{% endblock %}
+
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
+    <div class="card shadow p-4 mb-4 bg-white rounded" style="max-width: 500px; width: 100%;">
+        <div class="text-center">
+            {% if movie.picture %}
+                <img src="{{ movie.picture.image_path }}" class="me-3 mb-3" style="max-width: 150px;" alt="{{ movie.title }}">
+            {% endif %}
+            <h1 class="mb-3">{{ movie.title }}</h1>
+        </div>
+        <p><strong>Description:</strong> {{ movie.description }}</p>
+        <p><strong>Release date:</strong> {{ movie.release_date }}</p>
+        <p><strong>Genre:</strong> {{ movie.genre }}</p>
+        <p><strong>Extension:</strong> {{ movie.extension }}</p>
+        <p><strong>Size:</strong> {{ movie.size }}</p>
+        <p><strong>Загрузить:</strong> <a href="{{ movie.download_url }}" class="btn btn-success" target="_blank">Скачать фильм</a></p>
+        <p><strong>Actors:</strong> {{ movie.actors|join:", " }}</p>
+        <p><strong>Tags:</strong> {{ movie.tags|join:", " }}</p>
+        <div class="text-center mt-4 d-flex flex-column align-items-center gap-2">
+            <a href="/" class="btn btn-primary mb-2">Назад к списку</a>
+            {% if user.is_authenticated %}
+            <a href="/movies/{{ movie.id }}/edit/" class="btn btn-warning mb-2">Редактировать</a>
+            <a href="/movies/{{ movie.id }}/delete/" class="btn btn-danger">Удалить</a>
+            {% else %}
+            <p class="text-muted">Войдите, чтобы редактировать или удалять фильмы.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

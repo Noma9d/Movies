@@ -1,0 +1,26 @@
+{% extends "moviesapp/base.html" %}
+
+{% load static %}
+
+{% block title %}Галерея изображений{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Галерея изображений</h1>
+    <div class="d-flex flex-row flex-wrap gap-3 justify-content-center">
+        {% for picture in pictures %}
+            <div class="card shadow-sm mb-3" style="min-width: 220px; max-width: 220px;">
+                <a href="/pictures/{{ picture.id }}/">
+                    <img src="{{ picture.image_path }}" class="card-img-top" alt="{{ picture.name }}" style="object-fit:cover; max-height:300px; min-height:200px;">
+                </a>
+                <div class="card-body text-center">
+                    <h6 class="card-title">{{ picture.name }}</h6>
+                </div>
+            </div>
+        {% empty %}
+            <div class="text-center w-100">Нет изображений.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
