@@ -30,9 +30,14 @@ ul.list-unstyled, ul.list-unstyled li {
                                     {% if movie.actors %}
                                         Актеры: {{ movie.actors|join:", " }}<br>
                                     {% endif %}
-                                    {% if movie.tags %}
-                                        Теги: {{ movie.tags|join:", " }}
-                                    {% endif %}
+                                  {% if movie.tags %}
+                                      <div class="mt-2">
+                                          <strong>Теги:</strong>
+                                          {% for tag in movie.tags %}
+                                              <a href="/tag/{{ tag }}" class="badge bg-secondary me-1">{{ tag }}</a>
+                                          {% endfor %}
+                                      </div>
+                                  {% endif %}
                                 </small>
                             </div>
                         </div>
