@@ -10,6 +10,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from sqlalchemy.orm import joinedload
+from django.core.paginator import Paginator
 
 # Create your views here.
 
@@ -24,26 +25,28 @@ def register(request):
         if not username or not password1 or not password2:
             messages.error(request, "Все поля обязательны для заполнения")
             return render(request, "moviesapp/register.html")
-        
+
         if password1 != password2:
             messages.error(request, "Пароли не совпадают")
             return render(request, "moviesapp/register.html")
-        
+
         if len(password1) < 8:
             messages.error(request, "Пароль должен быть не менее 8 символов")
             return render(request, "moviesapp/register.html")
-        
+
         # Проверка на существование пользователя
         # Используем User.objects.filter() для проверки существования пользователя
         if User.objects.filter(username=username).exists():
             messages.error(request, "Пользователь с таким именем уже существует")
             return render(request, "moviesapp/register.html")
-        
-        user = User.objects.create_user(username=username, email=email, password=password1)
+
+        user = User.objects.create_user(
+            username=username, email=email, password=password1
+        )
         user.is_active = False  # Делаем пользователя неактивным до подтверждения
         user.save()
         return redirect("moviesapp:main")
-        
+
     return render(request, "moviesapp/register.html")
 
 
@@ -66,9 +69,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("moviesapp:main")
-
-
-
 
 
 def main(request):
@@ -113,9 +113,14 @@ def main(request):
         key=lambda x: x["id"], reverse=True
     )  # Сортируем по ID в обратном порядке, чтобы новые фильмы были первыми
 
+    paginator = Paginator(formatted_movies, 10)  # Пагинация: 10 фильмов на страницу
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     data = {
-        "movies": formatted_movies,
+        "movies": page_obj.object_list,  # Используем объект пагинации для получения текущей страницы
         "tags": Tag.get_all()[:10],  # Получаем первые 10 тегов
+        "page_obj": page_obj,  # Передаем объект пагинации в контекст
     }
 
     return render(request, "moviesapp/index.html", data)
@@ -155,7 +160,10 @@ def upload_image(request):
         ext = os.path.splitext(filename)[1].lower()
         if ext not in allowed_extensions:
             return JsonResponse(
-                {"success": False, "error": "Недопустимый формат файла. Разрешены: jpg, jpeg, png, gif, bmp, webp"},
+                {
+                    "success": False,
+                    "error": "Недопустимый формат файла. Разрешены: jpg, jpeg, png, gif, bmp, webp",
+                },
                 status=400,
             )
 
@@ -521,7 +529,17 @@ def pictures_list(request):
     # Это может быть полезно, если вы хотите видеть новые изображения вверху списка
     formatted_pictures.sort(key=lambda x: x["id"], reverse=True)
 
-    return render(request, "moviesapp/pictures.html", {"pictures": formatted_pictures})
+    # Пагинация: 20 изображений на страницу
+    paginator = Paginator(formatted_pictures, 20)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    data = {
+        "pictures": page_obj.object_list,  # Используем объект пагинации для получения текущей страницы
+        "page_obj": page_obj,  # Передаем объект пагинации в контекст
+    }
+
+    return render(request, "moviesapp/pictures.html", data)
 
 
 def picture_detail(request, picture_id):
@@ -612,16 +630,14 @@ def add_picture(request):
 def tag_detail(request, tag_name):
     tag = Tag.get_by_name(tag_name)  # Получаем тег по имени
 
-
     # Получаем все фильмы, связанные с тегом
     records_tag = session.query(Record).options(joinedload(Record.tags)).all()
 
     movies = [record for record in records_tag if tag in record.tags]
-    
+
     # Если тег не найден, возвращаем страницу с ошибкой
     if not tag:
         return render(request, "moviesapp/tag_not_found.html", {"tag_name": tag_name})
-
 
     formatted_movies = []
 
