@@ -118,6 +118,10 @@ class Tag(Base):
     @classmethod
     def get_by_name(cls, name):
         return session.query(cls).filter_by(name=name).first()
+    
+    @classmethod
+    def get_by_id(cls, tag_id):
+        return session.query(cls).filter_by(id=tag_id).first()
 
     def update(self, name):
         self.name = name

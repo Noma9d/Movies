@@ -9,6 +9,7 @@ from .db import Record, Tag, Actor, Picture, session
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from sqlalchemy.orm import joinedload
 
 # Create your views here.
 
@@ -298,7 +299,7 @@ def add_movie(request):
         # Обрабатываем актеров
         for actor_id in actors_ids:
             try:
-                actor = session.query(Actor).get(int(actor_id))
+                actor = session.query(Actor).filter(Actor.name == actor_id).first()
                 if actor:
                     actors.append(actor)
             except (ValueError, TypeError):
@@ -311,7 +312,8 @@ def add_movie(request):
         # Обрабатываем теги
         for tag_id in tags_ids:
             try:
-                tag = session.query(Tag).get(int(tag_id))
+                # Проверяем, существует ли тег с таким именем
+                tag = session.query(Tag).filter(Tag.name == tag_id).first()
                 if tag:
                     tags.append(tag)
             except (ValueError, TypeError):
@@ -605,3 +607,58 @@ def add_picture(request):
         messages.success(request, "Изображение успешно добавлено!")
         return redirect("moviesapp:pictures_list")
     return render(request, "moviesapp/add_picture.html")
+
+
+def tag_detail(request, tag_name):
+    tag = Tag.get_by_name(tag_name)  # Получаем тег по имени
+
+
+    # Получаем все фильмы, связанные с тегом
+    records_tag = session.query(Record).options(joinedload(Record.tags)).all()
+
+    movies = [record for record in records_tag if tag in record.tags]
+    
+    # Если тег не найден, возвращаем страницу с ошибкой
+    if not tag:
+        return render(request, "moviesapp/tag_not_found.html", {"tag_name": tag_name})
+
+
+    formatted_movies = []
+
+    for movie in movies:
+        picture = Picture.get_by_id(movie.picture_id) if movie.picture_id else None
+        if picture and picture.image_path:
+            # Убираем ведущий /static/, если есть
+            if picture.image_path.startswith("/static/"):
+                image_path = picture.image_path
+            else:
+                image_path = static(picture.image_path)
+        else:
+            image_path = static("movies/posters/default.jpg")
+
+        formatted_movies.append(
+            {
+                "id": movie.id,
+                "title": movie.title,
+                "description": movie.description,
+                "release_date": movie.release_date.strftime("%Y-%m-%d"),
+                "genre": movie.genre,
+                "extension": movie.extension,
+                "size": movie.size,
+                "download_url": movie.download_url,
+                "actors": [actor.name for actor in movie.actors],
+                "tags": [tag.name for tag in movie.tags],
+                "picture": {
+                    "id": picture.id if picture else None,
+                    "name": picture.name if picture else None,
+                    "image_path": image_path,  # Используем image_path из Picture
+                },
+            }
+        )
+
+    data = {
+        "tag": tag_name,
+        "movies": formatted_movies,
+    }
+
+    return render(request, "moviesapp/tag_detail.html", data)

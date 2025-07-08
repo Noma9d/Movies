@@ -22,17 +22,18 @@ urlpatterns = [
         "pictures/<int:picture_id>/delete/", views.delete_picture, name="delete_picture"
     ),
     path("picture/add_picture/", views.add_picture, name="add_picture"),
-    # path('search/', views.search, name='search'),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
+    # path('search/', views.search, name='search'),
+    path("tag/<str:tag_name>/", views.tag_detail, name="tag_detail"),
 ]
 
 """
 
     Реализовать поиск по фильмам и картинкам
-    Сделать теги кликабельными
     Реализовать топ-10 тегов на главной странице, сейчас выводятся только первые 10 тегов
     Реализовать пагинацию для списка фильмов и картинок
-
+    Необходимо исправить добавление нескольких тегов и актеров к фильму, сейчас добавляется только один тег или актер
+    
 """
 
