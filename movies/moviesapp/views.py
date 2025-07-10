@@ -71,7 +71,7 @@ def logout_view(request):
     return redirect("moviesapp:main")
 
 
-def main(request):
+def main(request) -> render:
     # Получаем все фильмы
     movies = Record.get_all()
 
@@ -126,14 +126,14 @@ def main(request):
     return render(request, "moviesapp/index.html", data)
 
 
-def about(request):
+def about(request) -> render:
     return render(
         request,
         "moviesapp/about.html",
     )
 
 
-def contact(request):
+def contact(request) -> render:
     return render(request, "moviesapp/contact.html")
 
 
@@ -150,7 +150,7 @@ def movies(request):
 
 
 @login_required
-def upload_image(request):
+def upload_image(request) -> JsonResponse:
     if request.method == "POST" and request.FILES.get("image"):
         image_file = request.FILES["image"]
 
@@ -211,7 +211,7 @@ def upload_image(request):
 
 
 @login_required
-def add_movie(request):
+def add_movie(request) -> render:
     if request.method == "POST":
         title = request.POST.get("title")
         description = request.POST.get("description")
@@ -368,7 +368,7 @@ def add_movie(request):
     return render(request, "moviesapp/add_movie.html", {"actors": actors, "tags": tags})
 
 
-def movie_detail(request, movie_id):
+def movie_detail(request, movie_id: int) -> render:
     movie = Record.get_by_id(movie_id)
     if not movie:
         return render(request, "moviesapp/movie_not_found.html", {"movie_id": movie_id})
@@ -407,7 +407,7 @@ def movie_detail(request, movie_id):
 
 
 @login_required
-def edit_movie(request, movie_id):
+def edit_movie(request, movie_id: int) -> render:
     movie = Record.get_by_id(movie_id)
     if not movie:
         return render(request, "moviesapp/movie_not_found.html", {"movie_id": movie_id})
@@ -491,7 +491,7 @@ def edit_movie(request, movie_id):
 
 
 @login_required
-def delete_movie(request, movie_id):
+def delete_movie(request, movie_id:int) -> render:
     movie = Record.get_by_id(movie_id)
     if not movie:
         return render(request, "moviesapp/movie_not_found.html", {"movie_id": movie_id})
@@ -508,7 +508,7 @@ def delete_movie(request, movie_id):
     return render(request, "moviesapp/confirm_delete.html", {"movie": movie})
 
 
-def pictures_list(request):
+def pictures_list(request) -> render:
     pictures = session.query(Picture).all()
     formatted_pictures = []
     for picture in pictures:
@@ -542,7 +542,7 @@ def pictures_list(request):
     return render(request, "moviesapp/pictures.html", data)
 
 
-def picture_detail(request, picture_id):
+def picture_detail(request, picture_id:int) -> render:
 
     # Получаем изображение по ID
     picture = session.query(Picture).get(picture_id)
@@ -576,7 +576,7 @@ def picture_detail(request, picture_id):
 
 
 @login_required
-def delete_picture(request, picture_id):
+def delete_picture(request, picture_id:int) -> render:
     picture = session.query(Picture).get(picture_id)
     if not picture:
         return render(
@@ -601,7 +601,7 @@ def delete_picture(request, picture_id):
 
 
 @login_required
-def add_picture(request):
+def add_picture(request) -> render:
     if request.method == "POST" and request.FILES.get("image"):
         image_file = request.FILES["image"]
         name = request.POST.get("name", image_file.name)
@@ -627,7 +627,7 @@ def add_picture(request):
     return render(request, "moviesapp/add_picture.html")
 
 
-def tag_detail(request, tag_name):
+def tag_detail(request, tag_name: str) -> render:
     tag = Tag.get_by_name(tag_name)  # Получаем тег по имени
 
     # Получаем все фильмы, связанные с тегом
