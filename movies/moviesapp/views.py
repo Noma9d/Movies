@@ -11,11 +11,16 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from sqlalchemy.orm import joinedload
 from django.core.paginator import Paginator
+from logging import getLogger
+from datetime import date
+
+
+logger = getLogger(__name__)
 
 # Create your views here.
 
 
-def register(request):
+def register(request) -> render:
     if request.method == "POST":
         username = request.POST.get("username")
         email = request.POST.get("email")
@@ -50,7 +55,7 @@ def register(request):
     return render(request, "moviesapp/register.html")
 
 
-def login_view(request):
+def login_view(request) -> render:
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -220,8 +225,26 @@ def add_movie(request) -> render:
         extension = request.POST.get("extension")
         size = request.POST.get("size")
         download_url = request.POST.get("download_url")
-        actors_ids = request.POST.getlist("actors")
-        tags_ids = request.POST.getlist("tags")
+        actors_name = request.POST.getlist("actors")
+        tags_name = request.POST.getlist("tags")
+
+        if not title:
+            messages.error(request, "Пожалуйста, укажите название фильма")
+            return render(
+                request,
+                "moviesapp/add_movie.html",
+                {
+                    "title": title,
+                    "description": description,
+                    "year": year,
+                    "genre": genre,
+                    "extension": extension,
+                    "size": size,
+                    "download_url": download_url,
+                    "actors": session.query(Actor).all(),
+                    "tags": session.query(Tag).all(),
+                },
+            )
 
         # Валидация года выпуска
         if not year:
@@ -267,6 +290,64 @@ def add_movie(request) -> render:
                     "tags": session.query(Tag).all(),
                 },
             )
+        
+        if extension not in ["mp4", "mkv", "avi", "mov", "flv"]:
+            messages.error(
+                request,
+                "Неверный формат видео. Пожалуйста, выберите один из следующих форматов: mp4, mkv, avi, mov, flv",
+            )
+            return render(
+                request,
+                "moviesapp/add_movie.html",
+                {
+                    "title": title,
+                    "description": description,
+                    "year": year,
+                    "genre": genre,
+                    "extension": extension,
+                    "size": size,
+                    "download_url": download_url,
+                    "actors": session.query(Actor).all(),
+                    "tags": session.query(Tag).all(),
+                },
+            )
+        
+
+        if not size or not size.isdigit() or int(size) <= 0:
+            messages.error(request, "Пожалуйста, укажите корректный размер файла")
+            return render(
+                request,
+                "moviesapp/add_movie.html",
+                {
+                    "title": title,
+                    "description": description,
+                    "year": year,
+                    "genre": genre,
+                    "extension": extension,
+                    "size": size,
+                    "download_url": download_url,
+                    "actors": session.query(Actor).all(),
+                    "tags": session.query(Tag).all(),
+                },
+            )
+        
+        if not download_url:
+            messages.error(request, "Пожалуйста, укажите ссылку для скачивания фильма")
+            return render(
+                request,
+                "moviesapp/add_movie.html",
+                {
+                    "title": title,
+                    "description": description,
+                    "year": year,
+                    "genre": genre,
+                    "extension": extension,
+                    "size": size,
+                    "download_url": download_url,
+                    "actors": actors_name,
+                    "tags": tags_name,
+                },
+            )
 
         # Получаем ID изображения из формы
         picture_id = request.POST.get("picture_id")
@@ -283,10 +364,11 @@ def add_movie(request) -> render:
                     "extension": extension,
                     "size": size,
                     "download_url": download_url,
-                    "actors": actors,
-                    "tags": tags,
+                    "actors": actors_name,
+                    "tags": tags_name,
                 },
             )
+        
 
         # Создаем новый фильм
         new_movie = Record(
@@ -305,28 +387,27 @@ def add_movie(request) -> render:
         tags = []
 
         # Обрабатываем актеров
-        for actor_id in actors_ids:
-            try:
-                actor = session.query(Actor).filter(Actor.name == actor_id).first()
-                if actor:
-                    actors.append(actor)
-            except (ValueError, TypeError):
+        for actor_name in actors_name:
+            actor = session.query(Actor).filter(Actor.name == actor_name).first()
+            if actor:
+                actors.append(actor)
+            else:
                 # Если это новое имя актера
-                new_actor = Actor(name=actor_id, age=None, bio=None, image_path=None)
+                new_actor = Actor(name=actor_name, age=None, bio=None, image_path=None)
                 session.add(new_actor)
                 session.flush()  # Получаем ID только что добавленного актера
                 actors.append(new_actor)
 
+
         # Обрабатываем теги
-        for tag_id in tags_ids:
-            try:
-                # Проверяем, существует ли тег с таким именем
-                tag = session.query(Tag).filter(Tag.name == tag_id).first()
-                if tag:
-                    tags.append(tag)
-            except (ValueError, TypeError):
+        for tag_name in tags_name:
+            # Проверяем, существует ли тег с таким именем
+            tag = session.query(Tag).filter(Tag.name == tag_name).first()
+            if tag:
+                tags.append(tag)
+            else:
                 # Если это новое имя тега
-                new_tag = Tag(name=tag_id)
+                new_tag = Tag(name=tag_name)
                 session.add(new_tag)
                 session.flush()  # Получаем ID только что добавленного тега
                 tags.append(new_tag)
@@ -342,7 +423,6 @@ def add_movie(request) -> render:
             return redirect("moviesapp:movies")
         except Exception as e:
             session.rollback()
-            print(f"Ошибка при сохранении данных: {str(e)}")  # Для отладки
             messages.error(request, f"Ошибка при сохранении данных: {str(e)}")
             return render(
                 request,
@@ -355,8 +435,8 @@ def add_movie(request) -> render:
                     "extension": extension,
                     "size": size,
                     "download_url": download_url,
-                    "actors": actors,
-                    "tags": tags,
+                    "actors": actors_name,
+                    "tags": tags_name,
                 },
             )
 
@@ -408,7 +488,9 @@ def movie_detail(request, movie_id: int) -> render:
 
 @login_required
 def edit_movie(request, movie_id: int) -> render:
-    movie = Record.get_by_id(movie_id)
+    movie = session.query(Record).get(movie_id)
+
+    # Проверяем, существует ли фильм с таким ID
     if not movie:
         return render(request, "moviesapp/movie_not_found.html", {"movie_id": movie_id})
 
@@ -420,33 +502,42 @@ def edit_movie(request, movie_id: int) -> render:
         movie.extension = request.POST.get("extension")
         movie.size = request.POST.get("size")
         movie.download_url = request.POST.get("download_url")
-        movie.release_date = f"{year}-01-01"
+        try:
+            movie.release_date = date(int(year), 1, 1)
+        except (ValueError, TypeError):
+            movie.release_date = None
 
         # Обновление актеров и тегов
-        actors_ids = request.POST.getlist("actors")
-        tags_ids = request.POST.getlist("tags")
+        actors_name = request.POST.getlist("actors")
+        tags_name = request.POST.getlist("tags")
         actors = []
         tags = []
-        for actor_id in actors_ids:
-            try:
-                actor = session.query(Actor).get(int(actor_id))
-                if actor:
-                    actors.append(actor)
-            except (ValueError, TypeError):
-                new_actor = Actor(name=actor_id, age=None, bio=None, image_path=None)
+
+        # Обрабатываем актеров
+        for actor_name in actors_name:
+            actor = session.query(Actor).filter(Actor.name == actor_name).first()
+            if actor:
+                actors.append(actor)
+            else:
+                # Если это новое имя актера
+                new_actor = Actor(name=actor_name, age=None, bio=None, image_path=None)
                 session.add(new_actor)
-                session.flush()
+                session.flush()  # Получаем ID только что добавленного актера
                 actors.append(new_actor)
-        for tag_id in tags_ids:
-            try:
-                tag = session.query(Tag).get(int(tag_id))
-                if tag:
-                    tags.append(tag)
-            except (ValueError, TypeError):
-                new_tag = Tag(name=tag_id)
+
+        # Обрабатываем теги
+        for tag_name in tags_name:
+            # Проверяем, существует ли тег с таким именем
+            tag = session.query(Tag).filter(Tag.name == tag_name).first()
+            if tag:
+                tags.append(tag)
+            else:
+                # Если это новое имя тега
+                new_tag = Tag(name=tag_name)
                 session.add(new_tag)
-                session.flush()
+                session.flush()  # Получаем ID только что добавленного тега
                 tags.append(new_tag)
+
         movie.actors = actors
         movie.tags = tags
 
@@ -454,7 +545,7 @@ def edit_movie(request, movie_id: int) -> render:
         picture_id = request.POST.get("picture_id")
         if picture_id:
             movie.picture_id = picture_id
-
+        
         try:
             session.commit()
             return redirect("moviesapp:movie_detail", movie_id=movie.id)
@@ -480,8 +571,8 @@ def edit_movie(request, movie_id: int) -> render:
             "download_url": movie.download_url,
             "actors": all_actors,
             "tags": all_tags,
-            "selected_actors": [a.id for a in movie.actors],
-            "selected_tags": [t.id for t in movie.tags],
+            "selected_actors": movie.actors,
+            "selected_tags": movie.tags,
             "picture_id": movie.picture_id,
             "image_path": image_path,
             "edit_mode": True,
