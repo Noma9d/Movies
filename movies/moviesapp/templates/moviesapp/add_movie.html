@@ -112,6 +112,13 @@ function handleImageUpload(event) {
             <label>Теги:</label>
             <div class="d-flex flex-column gap-2">
                 <select class="form-control" id="tags" name="tags" multiple>
+                    {% if edit_mode %}
+                        {% for tag in selected_tags %}
+                            <option value="{{ tag.name }}" selected>
+                                {{ tag.name }}
+                            </option>
+                        {% endfor %}
+                    {% endif %}
                 </select>
                 <div class="d-flex gap-2">
                     <input type="text" class="form-control" id="new_tag" name="new_tag" placeholder="Новый тег">
@@ -122,7 +129,14 @@ function handleImageUpload(event) {
         <div class="form-group">
             <label>Актеры:</label>
             <div class="d-flex flex-column gap-2">
-                <select class="form-control" id="actors" name="actors" multiple>
+                <select class="form-control" id="actors" name="actors" multiple style="width:100%">
+                    {% if edit_mode %}
+                        {% for actor in selected_actors %}
+                        <option value="{{ actor.name }}" selected>
+                            {{ actor.name }}
+                        </optio>
+                        {% endfor %}
+                    {% endif %}
                 </select>
                 <div class="d-flex gap-2">
                     <input type="text" class="form-control" id="new_actor" name="new_actor" placeholder="Новый актер">
