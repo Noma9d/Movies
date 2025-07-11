@@ -5,33 +5,53 @@
 
 {% block content %}
 <script>
-function addNewActor() {
-    const input = document.getElementById('new_actor');
-    const select = document.getElementById('actors');
-    const value = input.value.trim();
-    if (value) {
-        const option = document.createElement('option');
-        option.value = value;
-        option.text = value;
-        option.selected = true; // Делаем новый элемент выбранным
-        select.add(option);
-        input.value = '';
-    }
-}
 
 function addNewTag() {
-    const input = document.getElementById('new_tag');
+    const input  = document.getElementById('new_tag');
     const select = document.getElementById('tags');
-    const value = input.value.trim();
-    if (value) {
-        const option = document.createElement('option');
-        option.value = value;
-        option.text = value;
-        option.selected = true; // Делаем новый элемент выбранным
+    const value  = input.value.trim();
+    if (!value) return;
+
+    // ищем существующий option
+    let option = Array.from(select.options)
+                       .find(opt => opt.value === value);
+
+    if (option) {
+        // уже есть в списке — просто выделяем
+        option.selected = true;
+    } else {
+        // совсем новый — создаём и выделяем
+        option = new Option(value, value, true, true);
         select.add(option);
-        input.value = '';
     }
+
+    input.value = '';           // очистили поле
 }
+
+function addNewActor() {
+    const input  = document.getElementById('new_actor');
+    const select = document.getElementById('actors');
+    const value  = input.value.trim();
+    if (!value) return;
+
+    // ищем существующий option
+    let option = Array.from(select.options)
+                       .find(opt => opt.value === value);
+
+    if (option) {
+        // уже есть в списке — просто выделяем
+        option.selected = true;
+    } else {
+        // совсем новый — создаём и выделяем
+        option = new Option(value, value, true, true);
+        select.add(option);
+    }
+
+    input.value = '';           // очистили поле
+}
+
+
+
 
 // Загрузка изображения
 function handleImageUpload(event) {
@@ -121,7 +141,17 @@ function handleImageUpload(event) {
                     {% endif %}
                 </select>
                 <div class="d-flex gap-2">
-                    <input type="text" class="form-control" id="new_tag" name="new_tag" placeholder="Новый тег">
+                    <input type="text"
+                           list="tag_options"
+                           class="form-control"
+                           id="new_tag"
+                           placeholder="Новый или существующий тег">
+
+                    <datalist id="tag_options">
+                        {% for tag in tags %}
+                            <option value="{{ tag.name }}"></option>
+                        {% endfor %}
+                    </datalist>
                     <button type="button" class="btn btn-outline-primary" onclick="addNewTag()">Добавить</button>
                 </div>
             </div>
@@ -139,7 +169,16 @@ function handleImageUpload(event) {
                     {% endif %}
                 </select>
                 <div class="d-flex gap-2">
-                    <input type="text" class="form-control" id="new_actor" name="new_actor" placeholder="Новый актер">
+                    <input type="text"
+                       list="actor_options"
+                       class="form-control"
+                       id="new_actor"
+                       placeholder="Новый или существующий тег">
+                    <datalist id="actor_options">
+                        {% for actor in actors %}
+                            <option value="{{ actor.name }}"></option>
+                        {% endfor %}
+                    </datalist>
                     <button type="button" class="btn btn-outline-primary" onclick="addNewActor()">Добавить</button>
                 </div>
             </div>  
