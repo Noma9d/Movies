@@ -63,7 +63,7 @@
         <div class="form-group">
             <label>Теги:</label>
             <div class="d-flex flex-column gap-2">
-                <select class="form-control" id="tags" name="tags" multiple>
+                <select class="form-control" id="tags" name="tags" multiple size="8" style="width:100%; height: 200px;">
                     {% if edit_mode %}
                         {% for tag in selected_tags %}
                             <option value="{{ tag.name }}" selected>
@@ -84,14 +84,19 @@
                             <option value="{{ tag.name }}"></option>
                         {% endfor %}
                     </datalist>
-                    <button type="button" class="btn btn-outline-primary" onclick="addNewTag()">Добавить</button>
+                    <button type="button"
+                            class="btn btn-outline-danger form-control"
+                            onclick="removeSelectedTags()">
+                        Удалить выбранные теги
+                    </button>
+                    <button type="button" class="btn btn-outline-primary form-control" onclick="addNewTag()">Добавить</button>
                 </div>
             </div>
         </div>
         <div class="form-group">
             <label>Актеры:</label>
             <div class="d-flex flex-column gap-2">
-                <select class="form-control" id="actors" name="actors" multiple style="width:100%">
+                <select class="form-control" id="actors" name="actors" multiple style="width:100%; height: 200px;">
                     {% if edit_mode %}
                         {% for actor in selected_actors %}
                         <option value="{{ actor.name }}" selected>
@@ -111,7 +116,15 @@
                             <option value="{{ actor.name }}"></option>
                         {% endfor %}
                     </datalist>
-                    <button type="button" class="btn btn-outline-primary" onclick="addNewActor()">Добавить</button>
+                    <button type="button"
+                            class="btn btn-outline-danger form-control"
+                            onclick="removeSelectedActors()">
+                        Удалить выбранных актеров
+                    </button>
+                    <button type="button" class="btn btn-outline-primary form-control"
+                             onclick="addNewActor()">
+                         Добавить
+                    </button>
                 </div>
             </div>  
     </select>

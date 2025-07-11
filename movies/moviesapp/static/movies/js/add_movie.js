@@ -20,6 +20,19 @@ function addNewTag() {
     input.value = '';           // очистили поле
 }
 
+function removeSelectedTags() {
+    const select   = document.getElementById('tags');
+    const selected = Array.from(select.selectedOptions);
+
+    // ничего не выбрано — выходим
+    if (!selected.length) return;
+
+    // проходим с конца, чтобы индексы не «плыли»
+    for (let i = selected.length - 1; i >= 0; i--) {
+        select.remove(selected[i].index);
+    }
+}
+
 function addNewActor() {
     const input  = document.getElementById('new_actor');
     const select = document.getElementById('actors');
@@ -43,7 +56,18 @@ function addNewActor() {
 }
 
 
+function removeSelectedActors() {
+    const select   = document.getElementById('actors');
+    const selected = Array.from(select.selectedOptions);
 
+    // ничего не выбрано — выходим
+    if (!selected.length) return;
+
+    // проходим с конца, чтобы индексы не «плыли»
+    for (let i = selected.length - 1; i >= 0; i--) {
+        select.remove(selected[i].index);
+    }
+}
 
 // Загрузка изображения
 function handleImageUpload(event) {
