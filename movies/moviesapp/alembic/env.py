@@ -12,7 +12,7 @@ fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from moviesapp.db import Base
+from db import Base
 
 target_metadata = Base.metadata
 

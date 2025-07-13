@@ -7,6 +7,7 @@ from configparser import ConfigParser
 
 
 config = ConfigParser()
+
 config.read("condfig.ini")
 # Read database configuration from the config file
 db_file = config.get("DB", "db_file", fallback="db.sqlite3")
