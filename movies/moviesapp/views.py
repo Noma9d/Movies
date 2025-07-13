@@ -277,11 +277,11 @@ def edit_movie(request, movie_id: int) -> render:
         # Обрабатываем актеров
         for actor_name in actors_name:
             actor, _ = Actor.objects.get_or_create(name=actor_name)
-            movie.actors.set(actor)
+            movie.actors.add(actor)
         # Обрабатываем теги
         for tag_name in tags_name:
             tag, _ = Tag.objects.get_or_create(name=tag_name)
-            movie.tags.set(tag)
+            movie.tags.add(tag)
         # Обновление постера
         picture_id = request.POST.get("picture_id")
         if picture_id:
