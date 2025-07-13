@@ -3,11 +3,19 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 import os
 from datetime import datetime
+from configparser import ConfigParser
+
+
+config = ConfigParser()
+config.read("condfig.ini")
+# Read database configuration from the config file
+db_file = config.get("DB", "db_file", fallback="db.sqlite3")
+db_connection_string = config.get("DB", "db_connection_string", fallback="sqlite:///db.sqlite3")
 
 Base = declarative_base()
 
 # Create the database engine
-engine = create_engine("sqlite:///db.sqlite3")
+engine = create_engine(db_connection_string, echo=False)
 Session = sessionmaker(bind=engine)
 session = Session()
 

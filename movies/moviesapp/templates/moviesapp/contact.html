@@ -5,13 +5,14 @@
 {% load static %}
 
 {% block stylesheets %}
+{{ block.super }}
 <link rel="stylesheet" href="{% static 'movies/css/contact.css' %}">
 {% endblock %}
 {% block content %}
     <div class="container-1">
         <h1>Связаться с нами</h1>
         <div class="info">
-            <p>Если у вас есть вопросы или предложения, заполните форму ниже или напишите нам на <a href="mailto:info@moviesapp.ru">info@moviesapp.ru</a>.</p>
+            <p>Если у вас есть вопросы или предложения, заполните форму ниже или напишите нам на <a href="mailto:info@moviesapp.uа">info@moviesapp.uа</a>.</p>
         </div>
         <form method="post">
             <label for="name">Имя</label>
