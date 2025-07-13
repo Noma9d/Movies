@@ -65,7 +65,7 @@
             <div class="d-flex flex-column gap-2">
                 <select class="form-control" id="tags" name="tags" multiple size="8" style="width:100%; height: 200px;">
                     {% if edit_mode %}
-                        {% for tag in selected_tags %}
+                        {% for tag in selected_tags.all %}
                             <option value="{{ tag.name }}" selected>
                                 {{ tag.name }}
                             </option>
@@ -98,7 +98,7 @@
             <div class="d-flex flex-column gap-2">
                 <select class="form-control" id="actors" name="actors" multiple style="width:100%; height: 200px;">
                     {% if edit_mode %}
-                        {% for actor in selected_actors %}
+                        {% for actor in selected_actors.all %}
                         <option value="{{ actor.name }}" selected>
                             {{ actor.name }}
                         </optio>

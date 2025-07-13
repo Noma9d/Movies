@@ -8,6 +8,7 @@ import os
 # Utility helpers for upload paths
 # -------------------------------------------------
 
+
 def upload_to_picture(instance, filename):
     """Return dynamic upload path for :class:`Picture` images."""
     return os.path.join("pictures", slugify(instance.name), filename)
@@ -21,6 +22,7 @@ def upload_to_actor(instance, filename):
 # -------------------------------------------------
 # Tag Model & Manager
 # -------------------------------------------------
+
 
 class Tag(models.Model):
     """Light-weight label for grouping :class:`Record` instances."""
@@ -59,6 +61,7 @@ class Tag(models.Model):
 # Actor Model
 # -------------------------------------------------
 
+
 class Actor(models.Model):
     """Human that plays in a :class:`Record` (e.g. movie actor)."""
 
@@ -83,9 +86,9 @@ class Actor(models.Model):
     @classmethod
     def get_by_id(cls, actor_id: int):
         return cls.objects.filter(id=actor_id).first()
-    
+
     @classmethod
-    def get_by_name(cls, name : str):
+    def get_by_name(cls, name: str):
         return cls.objects.filter(name=name).first
 
     def update(self, **kwargs):
@@ -98,6 +101,7 @@ class Actor(models.Model):
 # -------------------------------------------------
 # Picture Model
 # -------------------------------------------------
+
 
 class Picture(models.Model):
     """Image file that can be referenced by many :class:`Record`s."""
@@ -138,6 +142,7 @@ class Picture(models.Model):
 # Custom queryset & manager for Record
 # -------------------------------------------------
 
+
 class RecordQuerySet(models.QuerySet):
     """Reusable filters for :class:`Record`."""
 
@@ -157,12 +162,15 @@ class RecordManager(models.Manager):
         return self.get_queryset().all()
 
     def get_by_id(self, record_id: int):
-        return self.get_queryset().filter(id=record_id).select_related("picture").first()
+        return (
+            self.get_queryset().filter(id=record_id).select_related("picture").first()
+        )
 
 
 # -------------------------------------------------
 # Record Model
 # -------------------------------------------------
+
 
 class Record(models.Model):
     """A generic downloadable item (movie, track, doc, etc.)."""
