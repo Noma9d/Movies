@@ -10,7 +10,7 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
-    # path("movies/", movies, name="movies"),
+    path("movies/", views.movies, name="movies"),
     path("movies/add_movie/", views.add_movie, name="add_movie"),
     path("movies/<int:movie_id>/", views.movie_detail, name="movie_detail"),
     path("movies/<int:movie_id>/edit/", views.edit_movie, name="edit_movie"),
@@ -24,8 +24,8 @@ urlpatterns = [
     path("picture/add_picture/", views.add_picture, name="add_picture"),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
-    # # path('search/', views.search, name='search'),
-    path("tag/<str:tag_name>/", views.tag_detail, name="tag_detail"),
+    # path('search/', views.search, name='search'),
+    path("movies/filter/<str:filter_type>/<str:value>", views.movies_filter, name="movies_filter")
 ]
 
 """
@@ -33,7 +33,6 @@ urlpatterns = [
     Заменить базу данных на PostgreSQL
     Реализовать поиск по фильмам и картинкам
     Реализовать топ-10 тегов на главной странице, сейчас выводятся только первые 10 тегов
-    Реализовать кликабельность актеров что бы можно было перейти на страницу актера и увидеть все фильмы с его участием
     Реализовать добавление информации о актерах, ее удаление и редактирование
     Сделать файл с настройками для хранения конфигурации приложения
     Реализовать возможность добавления нескольких картинок к одному фильму

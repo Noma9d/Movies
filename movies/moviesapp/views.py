@@ -9,13 +9,23 @@ from .models import Record, Tag, Actor, Picture
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from sqlalchemy.orm import joinedload
 from django.core.paginator import Paginator
 from logging import getLogger
 from datetime import date
+from django.http import Http404
 
 
 logger = getLogger(__name__)
+
+
+FILTERS = {
+    "tag":   lambda qs, v: qs.filter(tags__name__iexact=v),
+    "actor": lambda qs, v: qs.filter(actors__name__iexact=v),
+    "year":  lambda qs, v: qs.filter(
+    release_date__year=datetime.strptime(v, "%Y-%m-%d").year),
+    "genre": lambda qs, v: qs.filter(genre__iexact=v),
+}
+
 
 # Create your views here.
 
@@ -426,49 +436,7 @@ def add_picture(request) -> render:
     return render(request, "moviesapp/add_picture.html")
 
 
-def tag_detail(request, tag_name: str) -> render:
-    tag = Tag.objects.get(name=tag_name)  # Получаем тег по имени
-    # Получаем все фильмы, связанные с тегом
-    records_tag = Record.objects.filter(tags=tag.id)
-    movies = [record for record in records_tag if tag in record.tags.all()]
-    # Если тег не найден, возвращаем страницу с ошибкой
-    if not tag:
-        return render(request, "moviesapp/tag_not_found.html", {"tag_name": tag_name})
-    formatted_movies = []
-    for movie in movies:
-        picture = (
-            Picture.objects.filter(id=movie.picture_id).first()
-            if movie.picture_id
-            else None
-        )
-        if picture and picture.image:
-            image_path = picture.image
-        else:
-            image_path = static("movies/defaults/default_posters.jpg")
-        formatted_movies.append(
-            {
-                "id": movie.id,
-                "title": movie.title,
-                "description": movie.description,
-                "release_date": movie.release_date.strftime("%Y-%m-%d"),
-                "genre": movie.genre,
-                "extension": movie.extension,
-                "size": movie.size,
-                "download_url": movie.download_url,
-                "actors": [actor.name for actor in movie.actors.all()],
-                "tags": [tag.name for tag in movie.tags.all()],
-                "picture": {
-                    "id": picture.id if picture else None,
-                    "name": picture.name if picture else None,
-                    "image_path": image_path,  # Используем image_path из Picture
-                },
-            }
-        )
-    data = {
-        "tag": tag_name,
-        "movies": formatted_movies,
-    }
-    return render(request, "moviesapp/tag_detail.html", data)
+
 
 
 def main(request) -> render:
@@ -605,3 +573,52 @@ def upload_image(request) -> JsonResponse:
         )
 
     return JsonResponse({"success": False, "error": "No image uploaded"}, status=400)
+
+
+def movies_filter(request, filter_type, value):
+    """
+    Универсальный фильтр фильмов по тегу, актёру, году или жанру.
+    """
+    print(value)
+    try:
+        movies = FILTERS[filter_type](Record.objects.all(), value)
+    except KeyError:
+        raise Http404("Неизвестный критерий фильтрации")
+
+    formatted_movies = []
+    for movie in movies:
+        picture = (
+            Picture.objects.filter(id=movie.picture_id).first()
+            if movie.picture_id
+            else None
+        )
+        if picture and picture.image:
+            image_path = picture.image
+        else:
+            image_path = static("movies/defaults/default_posters.jpg")
+        formatted_movies.append(
+            {
+                "id": movie.id,
+                "title": movie.title,
+                "description": movie.description,
+                "release_date": movie.release_date.strftime("%Y-%m-%d"),
+                "genre": movie.genre,
+                "extension": movie.extension,
+                "size": movie.size,
+                "download_url": movie.download_url,
+                "actors": [actor.name for actor in movie.actors.all()],
+                "tags": [tag.name for tag in movie.tags.all()],
+                "picture": {
+                    "id": picture.id if picture else None,
+                    "name": picture.name if picture else None,
+                    "image_path": image_path,  # Используем image_path из Picture
+                },
+            }
+        )
+
+    context = {
+        "movies": formatted_movies,
+        "filter_type": filter_type,
+        "value": value,
+    }
+    return render(request, "moviesapp/movies_filter.html", context)

@@ -1,19 +1,35 @@
 {% extends "moviesapp/base.html" %}
 
-{% block title %}Movies{% endblock %}
-
+{% block title %}
+  {% if filter_type == "tag" %}
+    Tag: {{ value }}
+  {% elif filter_type == "actor" %}
+    Actor: {{ value }}
+  {% elif filter_type == "year" %}
+    Year: {{ value }}
+  {% elif filter_type == "genre" %}
+    Genre: {{ value }}
+  {% endif %}
+{% endblock %}
 
 {% block content %}
-<style>
-ul.list-unstyled, ul.list-unstyled li {
-    list-style: none !important;
-    margin-left: 0 !important;
-    padding-left: 0 !important;
-}
-</style>
 <div class="container">
-    <div class="row">
-        <div class="col-md-8 mx-auto">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+
+      <h1>
+        {% if filter_type == "tag" %}
+          Movies tagged “{{ value }}”
+        {% elif filter_type == "actor" %}
+          Movies with actor “{{ value }}”
+        {% elif filter_type == "year" %}
+          Movies released in {{ value }}
+        {% elif filter_type == "genre" %}
+          Movies in genre “{{ value }}”
+        {% endif %}
+      </h1>
+
+      <div class="col-md-8 mx-auto">
             <ul class="list-unstyled">
                 {% for movie in movies %}
                     <li class="mb-4">
@@ -22,7 +38,7 @@ ul.list-unstyled, ul.list-unstyled li {
                                 <img src="{{ movie.picture.image_path }}" class="me-3" style="max-width: 150px;" alt="{{ movie.title }}">
                             {% endif %}
                             <div>
-                                <a href="{% url "moviesapp:movie_detail" movie.id %}"><strong>{{ movie.title }}</strong></a>
+                                <a href="{% url "moviesapp:movie_detail" movie.id %}"><strong>{{ movie.title }}</strong></a> 
                                 <br><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
                                 {{ movie.description }}<br>
                                 <small class="text-muted">
@@ -31,7 +47,7 @@ ul.list-unstyled, ul.list-unstyled li {
                                           </a> <br>
                                     Размер: {{ movie.size }} МБ<br>
                                     {% if movie.actors %}
-                                    Актёры:
+                                        Актеры:
                                       {% for actor in movie.actors %}
                                         <a href="{% url "moviesapp:movies_filter" "actor" actor %}">
                                           {{ actor }}
@@ -55,56 +71,8 @@ ul.list-unstyled, ul.list-unstyled li {
                 {% endfor %}
             </ul>
         </div>
-        <div class="col-md-4">
-            <div class="tags-box">
-                <h2>Top Ten tags</h2>
-                <div class="tag-item">
-                    {% for tag in tags %}
-                        <a class="tag d-block mb-2" href="{% url "moviesapp:movies_filter" "tag" tag %}">{{ tag.name }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+
     </div>
+  </div>
 </div>
-<nav aria-label="Page navigation">
-  <ul class="pagination justify-content-center">
-    {# Кнопка "Previous" #}
-    {% if page_obj.has_previous %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-          <span aria-hidden="true">&laquo; Previous</span>
-        </a>
-      </li>
-    {% else %}
-      <li class="page-item disabled">
-        <span class="page-link">&laquo; Previous</span>
-      </li>
-    {% endif %}
-
-    {# Номера страниц (сокращённый диапазон) #}
-    {% for num in page_obj.paginator.page_range %}
-      {% if num == page_obj.number %}
-        <li class="page-item active">
-          <span class="page-link">{{ num }} <span class="sr-only">(current)</span></span>
-        </li>
-      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-      {% endif %}
-    {% endfor %}
-
-    {# Кнопка "Next" #}
-    {% if page_obj.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-          <span aria-hidden="true">Next &raquo;</span>
-        </a>
-      </li>
-    {% else %}
-      <li class="page-item disabled">
-        <span class="page-link">Next &raquo;</span>
-      </li>
-    {% endif %}
-  </ul>
-</nav>
 {% endblock %}
