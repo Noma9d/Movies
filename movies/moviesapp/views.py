@@ -2,7 +2,6 @@ import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
 from django.contrib import messages
 from django.templatetags.static import static
 from .models import Record, Tag, Actor, Picture
@@ -10,12 +9,9 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
-from logging import getLogger
 from datetime import date
 from django.http import Http404
-
-
-logger = getLogger(__name__)
+from django.db.models import Count
 
 
 FILTERS = {
@@ -482,9 +478,11 @@ def main(request) -> render:
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
+    top_tags = Tag.objects.annotate(movie_count=Count('records')).order_by('-movie_count')[:10]    
+
     data = {
         "movies": page_obj.object_list,  # Используем объект пагинации для получения текущей страницы
-        "tags": Tag.objects.all()[:10],  # Получаем первые 10 тегов
+        "tags": top_tags,  # Получаем топ 10 тегов
         "page_obj": page_obj,  # Передаем объект пагинации в контекст
     }
 
