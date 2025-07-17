@@ -26,10 +26,10 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get("DJANGO_DEBUG")
 
 # Добавляем домен или IP-адрес сервера
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOSTS")]
 
 
 # Application definition
@@ -76,6 +76,8 @@ WSGI_APPLICATION = "movies.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
+print(os.environ.get("DB_NAME"))
 
 
 DATABASES = {

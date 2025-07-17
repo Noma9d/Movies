@@ -10,7 +10,7 @@
     <div class="card shadow p-4 mb-4 bg-white rounded" style="max-width: 500px; width: 100%;">
         <div class="text-center">
             {% if movie.picture %}
-                <img src="{{ movie.picture.image }}" class="me-3 mb-3" style="max-width: 150px;" alt="{{ movie.title }}">
+                <img src="{{ movie.picture.image }}" class="me-3 mb-3" style="width: 150px; height: 300px;" alt="{{ movie.title }}">
             {% endif %}
             <h1 class="mb-3">{{ movie.title }}</h1>
         </div>
