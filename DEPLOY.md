@@ -1,56 +1,56 @@
-# Инструкция по деплою проекта Movies
+# Movies Project Deployment Guide
 
-## Предварительные требования
-- VPS сервер с Ubuntu 20.04 или новее
-- Зарегистрированное доменное имя
-- Минимум 1GB RAM
-- SSH доступ к серверу
+## Prerequisites
+- VPS server with Ubuntu 20.04 or newer
+- Registered domain name
+- Minimum 1GB RAM
+- SSH access to server
 
-## Шаги по деплою
+## Deployment Steps
 
-1. Скопируйте проект на сервер:
+1. Clone the project to server:
 ```bash
 git clone 
 cd Movies
 ```
 
-2. Настройте переменные окружения:
-- Откройте файл .env
-- Замените все значения на свои
-- Особенно важно заменить DJANGO_SECRET_KEY и пароли
+2. Configure environment variables:
+- Open .env file
+- Replace all values with your own
+- It's especially important to replace DJANGO_SECRET_KEY and passwords
 
-3. Запустите скрипт деплоя:
+3. Run deployment script:
 ```bash
 chmod +x deploy.sh
 ./deploy.sh
 ```
 
-4. После выполнения скрипта проверьте:
-- Работу сайта по домену
-- Работу SSL сертификата
-- Статические файлы
-- Загрузку медиа файлов
+4. After script execution, verify:
+- Website accessibility via domain
+- SSL certificate functionality
+- Static files serving
+- Media files uploading
 
-## Обслуживание
+## Maintenance
 
-### Проверка логов:
+### Checking logs:
 ```bash
-# Логи Gunicorn
+# Gunicorn logs
 sudo tail -f /var/log/gunicorn/error.log
 sudo tail -f /var/log/gunicorn/access.log
 
-# Логи Nginx
+# Nginx logs
 sudo tail -f /var/log/nginx/error.log
 sudo tail -f /var/log/nginx/access.log
 ```
 
-### Перезапуск сервисов:
+### Restarting services:
 ```bash
 sudo systemctl restart movies
 sudo systemctl restart nginx
 ```
 
-### Обновление проекта:
+### Project update:
 ```bash
 git pull
 poetry install
@@ -59,34 +59,34 @@ poetry run python manage.py collectstatic --noinput
 sudo systemctl restart movies
 ```
 
-### Бэкап базы данных:
+### Database backup:
 ```bash
 pg_dump movies_db > backup_$(date +%Y%m%d).sql
 ```
 
-## Устранение неполадок
+## Troubleshooting
 
-1. Если сайт не открывается:
-- Проверьте статус сервисов:
+1. If the site is not accessible:
+- Check services status:
 ```bash
 sudo systemctl status movies
 sudo systemctl status nginx
 ```
 
-2. Если не работают статические файлы:
-- Проверьте права доступа:
+2. If static files are not working:
+- Check file permissions:
 ```bash
 sudo chown -R www-data:www-data /home/cysco/Movies/staticfiles
 sudo chown -R www-data:www-data /home/cysco/Movies/media
 ```
 
-3. Проблемы с Poetry:
-- Переустановите Poetry:
+3. Poetry issues:
+- Reinstall Poetry:
 ```bash
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-## Контакты поддержки
-При возникновении проблем обращайтесь:
+## Support Contacts
+If you encounter any issues, please contact:
 - Email: your-email@example.com
 - GitHub: https://github.com/your-username

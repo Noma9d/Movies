@@ -1,24 +1,24 @@
-# Movies - Веб-приложение для каталогизации фильмов
+# Movies - Movie Cataloging Web Application
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue.svg)
 ![Django](https://img.shields.io/badge/Django-5.0-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-Веб-приложение для создания и управления каталогом фильмов с возможностью добавления описаний, постеров, тегов и информации об актерах.
+A web application for creating and managing a movie catalog with the ability to add descriptions, posters, tags, and actor information.
 
-## Основные возможности
+## Key Features
 
-- 🎬 Каталогизация фильмов с подробным описанием
-- 🏷️ Система тегов для удобной навигации
-- 👥 Управление информацией об актерах
-- 🖼️ Загрузка и управление постерами фильмов
-- 🔍 Поиск по названию, описанию, тегам и актерам
-- 📱 Адаптивный дизайн
-- 👤 Система аутентификации пользователей
-- 📊 Пагинация результатов
-- 🔒 Разграничение прав доступа
+- 🎬 Movie cataloging with detailed descriptions
+- 🏷️ Tag system for easy navigation
+- 👥 Actor information management
+- 🖼️ Movie poster upload and management
+- 🔍 Search by title, description, tags, and actors
+- 📱 Responsive design
+- 👤 User authentication system
+- 📊 Results pagination
+- 🔒 Access control system
 
-## Технологический стек
+## Technology Stack
 
 - **Backend**: Python 3.12, Django 5.0
 - **Database**: PostgreSQL
@@ -26,28 +26,28 @@
 - **Dependency Management**: Poetry
 - **Deployment**: Gunicorn, Nginx
 
-## Установка и запуск
+## Installation and Setup
 
-### Предварительные требования
+### Prerequisites
 
 - Python 3.12+
 - Poetry
 - PostgreSQL
 
-### Локальная установка
+### Local Installation
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
 ```bash
 git clone https://github.com/Noma9d/Movies.git
 cd Movies
 ```
 
-2. Установите зависимости с помощью Poetry:
+2. Install dependencies using Poetry:
 ```bash
 poetry install
 ```
 
-3. Создайте файл .env в корневой директории:
+3. Create .env file in the root directory:
 ```env
 DJANGO_SETTINGS_MODULE=movies.settings
 DJANGO_SECRET_KEY=your-secret-key
@@ -59,94 +59,95 @@ DB_HOST=localhost
 DB_PORT=5432
 ```
 
-4. Примените миграции:
+4. Apply migrations:
 ```bash
 poetry run python manage.py migrate
 ```
 
-5. Создайте суперпользователя:
+5. Create superuser:
 ```bash
 poetry run python manage.py createsuperuser
 ```
 
-6. Запустите сервер разработки:
+6. Run development server:
 ```bash
 poetry run python manage.py runserver
 ```
 
-### Использование Docker (опционально)
+### Using Docker (optional)
 
 ```bash
 docker-compose up --build
 ```
 
-## Структура проекта
+## Project Structure
 
 ```
 Movies/
-├── movies/                  # Основной проект Django
-│   ├── moviesapp/          # Основное приложение
-│   │   ├── static/         # Статические файлы
-│   │   ├── templates/      # HTML шаблоны
-│   │   ├── models.py       # Модели данных
-│   │   └── views.py        # Представления
-│   └── movies/             # Настройки проекта
-├── static/                 # Общие статические файлы
-├── media/                  # Загружаемые медиа файлы
-├── pyproject.toml         # Конфигурация Poetry
+├── movies/                  # Main Django project
+│   ├── moviesapp/          # Main application
+│   │   ├── static/         # Static files
+│   │   ├── templates/      # HTML templates
+│   │   ├── models.py       # Data models
+│   │   └── views.py        # Views
+│   └── movies/             # Project settings
+├── static/                 # Common static files
+├── media/                  # Uploaded media files
+├── pyproject.toml         # Poetry configuration
 └── README.md
 ```
 
 ## API Endpoints
 
-### Фильмы
-- `GET /` - Главная страница со списком фильмов
-- `GET /movies/<id>/` - Детальная информация о фильме
-- `POST /movies/add/` - Добавление нового фильма
-- `PUT /movies/<id>/edit/` - Редактирование фильма
-- `DELETE /movies/<id>/delete/` - Удаление фильма
+### Movies
+- `GET /` - Home page with movie list
+- `GET /movies/<id>/` - Detailed movie information
+- `POST /movies/add/` - Add new movie
+- `PUT /movies/<id>/edit/` - Edit movie
+- `DELETE /movies/<id>/delete/` - Delete movie
 
-### Изображения
-- `GET /pictures/` - Галерея изображений
-- `GET /pictures/<id>/` - Детальный просмотр изображения
-- `POST /pictures/add/` - Добавление нового изображения
-- `DELETE /pictures/<id>/delete/` - Удаление изображения
+### Pictures
+- `GET /pictures/` - Image gallery
+- `GET /pictures/<id>/` - Detailed image view
+- `POST /pictures/add/` - Add new image
+- `DELETE /pictures/<id>/delete/` - Delete image
 
-### Поиск и фильтрация
-- `GET /search/` - Поиск по фильмам
-- `GET /filter/<type>/<value>/` - Фильтрация фильмов
+### Search and Filtering
+- `GET /search/` - Search movies
+- `GET /filter/<type>/<value>/` - Filter movies
 
-## Тестирование
+## Testing
 
-Запуск тестов:
+Run tests:
 ```bash
 poetry run python manage.py test
 ```
 
-## Развертывание
+## Deployment
 
-Подробные инструкции по развертыванию находятся в файле [DEPLOY.md](DEPLOY.md).
+Detailed deployment instructions can be found in the [DEPLOY.md](DEPLOY.md) file.
 
-## Лицензия
+## License
 
-Этот проект распространяется под лицензией MIT. Подробности в файле [LICENSE](LICENSE).
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Участие в проекте
+## Contributing
 
-1. Форкните репозиторий
-2. Создайте ветку для новой функциональности
-3. Внесите изменения
-4. Отправьте пулл-реквест
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-## Авторы
+## Authors
 
-- Noma9d - Основной разработчик
+- Noma9d - Lead Developer
 
-## Поддержка
+## Support
 
-При возникновении проблем создавайте issues в репозитории проекта или обращайтесь по электронной почте.
+If you encounter any problems, please create an issue in the project repository or contact us via email.
 
-## Благодарности
+## Acknowledgments
 
-- Спасибо команде Django за отличный фреймворк
-- Всем участникам тестирования и разработки
+- Thanks to the Django team for the excellent framework
+- All testing and development participants
+
