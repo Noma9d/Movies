@@ -1,0 +1,116 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# Poetry
+poetry.lock
+dist/
+*.egg-info/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Logs
+logs/
+*.log
+
+# Local development settings
+local_settings.py
+
+# Database backups
+*.sql
+*.sqlite3-backup
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+movies/static/movies/posters/*
+!movies/static/movies/posters/.gitkeep
+movies/media/*
+!movies/media/.gitkeep
+
+# Temporary files
+*.bak
+*.swp
+*.swo
+*~
+.env.local
+.env.*.local
+
+# Production files
+production_settings.py
+gunicorn_config.py
+
+# Frontend
+node_modules/
+/frontend/dist/
+
+# SSL certificates
+*.pem
+*.key
+*.crt

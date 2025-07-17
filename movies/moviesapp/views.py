@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
 from datetime import date
 from django.http import Http404
-from django.db.models import Count
+from django.db.models import Count, Q
 
 
 FILTERS = {
@@ -252,7 +252,7 @@ def add_movie(request) -> render:
     return render(request, "moviesapp/add_movie.html", {"actors": actors, "tags": tags})
 
 
-@login_required
+
 def movie_detail(request, movie_id: int):
     movie = get_object_or_404(
         Record.objects.select_related("picture").prefetch_related("actors", "tags"),
@@ -574,10 +574,10 @@ def upload_image(request) -> JsonResponse:
 
 
 def movies_filter(request, filter_type, value):
+
     """
     Универсальный фильтр фильмов по тегу, актёру, году или жанру.
     """
-    print(value)
     try:
         movies = FILTERS[filter_type](Record.objects.all(), value)
     except KeyError:
@@ -614,9 +614,69 @@ def movies_filter(request, filter_type, value):
             }
         )
 
+    paginator = Paginator(formatted_movies, 10)  # Пагинация: 10 фильмов на страницу
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "movies": formatted_movies,
+        "movies": page_obj.object_list,  # Используем только фильмы текущей страницы
         "filter_type": filter_type,
         "value": value,
+        "page_obj": page_obj,  # Передаем объект пагинации в контекст
+        "params": request.GET.urlencode()  # Сохраняем параметры для пагинации
     }
     return render(request, "moviesapp/movies_filter.html", context)
+
+
+def search(request):
+
+    qs = Record.objects.get_queryset().select_related("picture").prefetch_related("tags", "actors")
+    q = request.GET.get("q")
+
+    if q:
+        qs = qs.filter(
+            Q(title__icontains=q) |
+            Q(description__icontains=q) |
+            Q(actors__name__icontains=q) |
+            Q(tags__name__icontains=q)
+        ).distinct()
+
+    formatted_movies = []
+
+    for movie in qs:
+        picture = Picture.objects.filter(id=movie.picture_id).first()
+        if picture and picture.image:
+            image_path = picture.image
+        else:
+            image_path = static("movies/defaults/default_posters.jpg")
+        formatted_movies.append(
+            {
+                "id": movie.id,
+                "title": movie.title,
+                "description": movie.description,
+                "release_date": movie.release_date.strftime("%Y-%m-%d"),
+                "genre": movie.genre,
+                "extension": movie.extension,
+                "size": movie.size,
+                "download_url": movie.download_url,
+                "actors": [actor.name for actor in movie.actors.all()],
+                "tags": [tag.name for tag in movie.tags.all()],
+                "picture": {
+                    "id": picture.id if picture else None,
+                    "name": picture.name if picture else None,
+                    "image_path": image_path,  # Используем image_path из Picture
+                },
+            }
+        )
+
+    paginator = Paginator(formatted_movies, 10)  # Пагинация: 10 фильмов на страницу
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "movies": page_obj.object_list,
+        "query": q,
+        "page_obj": page_obj,  # Передаем объект пагинации в контекст
+        "params": request.GET.urlencode()  # Сохраняем параметры для пагинации
+    }
+    return render(request, "moviesapp/search_results.html", context)

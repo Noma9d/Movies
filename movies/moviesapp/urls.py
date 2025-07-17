@@ -24,18 +24,14 @@ urlpatterns = [
     path("picture/add_picture/", views.add_picture, name="add_picture"),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
-    # path('search/', views.search, name='search'),
+    path('search/', views.search, name='search'),
     path("movies/filter/<str:filter_type>/<str:value>", views.movies_filter, name="movies_filter")
 ]
 
 """
     TODO:
     Заменить базу данных на PostgreSQL
-    Реализовать поиск по фильмам и картинкам
-    Реализовать топ-10 тегов на главной странице, сейчас выводятся только первые 10 тегов
-    Реализовать добавление информации о актерах, ее удаление и редактирование
     Сделать файл с настройками для хранения конфигурации приложения
-    Реализовать возможность добавления нескольких картинок к одному фильму
-    Реализовать отображение информции о том кто добавил фильм и картинку
+    
     
 """

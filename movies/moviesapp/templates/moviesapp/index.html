@@ -29,7 +29,7 @@ ul.list-unstyled, ul.list-unstyled li {
                                     Жанр: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
                                           {{ movie.genre }}
                                           </a> <br>
-                                    Размер: {{ movie.size }} МБ<br>
+                                    Размер: {{ movie.size }} Mb<br>
                                     {% if movie.actors %}
                                     Актёры:
                                       {% for actor in movie.actors %}

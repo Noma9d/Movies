@@ -39,7 +39,6 @@
             <div class="container-fluid justify-content-center">
                 <div class="d-flex flex-row align-items-center w-100 justify-content-center" style="gap: 1rem;">
                     <a class="navbar-brand " href="{% url "moviesapp:main" %}">Главная</a>
-                    <a class="navbar-brand" href="{% url "moviesapp:movies" %}">Фильмы</a>
                     <a class="navbar-brand" href="{% url "moviesapp:pictures_list" %}">Фото</a>
                     {% if user.is_authenticated %}
                         <a class="navbar-brand" href=" {% url "moviesapp:logout" %}">Выйти</a>
@@ -58,9 +57,23 @@
                         </ul>
                     </div>
                     {% endif %}
-                    <form method="get" action="{ url "" }" class="d-flex ms-3" role="search" style="width: 300px;">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width: 180px;"/>
-                        <button class="btn btn-outline-success" type="submit" style="width: 100px;">Search</button>
+                    <form method="get"
+                          action="{% url "moviesapp:search" %}"
+                          class="d-flex ms-3"
+                          role="search"
+                          style="width: 300px;">
+
+                        <input name="q"                              {# ← name! #}
+                             class="form-control me-2"
+                             type="search"
+                             placeholder="Название, актёр, тег…"
+                             aria-label="Search"
+                             style="width: 180px;"
+                             value="{{ request.GET.q|default_if_none:'' }}"/>
+
+                        <button class="btn btn-outline-success"
+                              type="submit"
+                              style="width: 100px;">Search</button>
                     </form>
                 </div>
             </div>

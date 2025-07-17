@@ -14,14 +14,14 @@
             {% endif %}
             <h1 class="mb-3">{{ movie.title }}</h1>
         </div>
-        <p><strong>Description:</strong> <br><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
-        <p><strong>Release date:</strong> {{ movie.release_date }}</p>
+        <p><strong>Description:</strong> {{ movie.description }} <br>
+        <p><strong>Release date:</strong><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a></p>
         <p><strong>Genre:</strong>
             <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
                 {{ movie.genre }}
                 </a> </p>
         <p><strong>Extension:</strong> {{ movie.extension }}</p>
-        <p><strong>Size:</strong> {{ movie.size }}</p>
+        <p><strong>Size:</strong> {{ movie.size }} Mb</p>
         <p><strong>Загрузить:</strong> <a href="{{ movie.download_url }}" class="btn btn-success" target="_blank">Скачать фильм</a></p>
         <p><strong>Actors:
             {% if movie.actors %}
