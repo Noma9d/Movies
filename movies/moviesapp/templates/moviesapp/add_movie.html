@@ -55,10 +55,14 @@
             <input type="url" class="form-control" id="download_url" name="download_url" required value="{{ download_url|default:'' }}", placeholder="This is a required field.">
         </div>
         <div class="form-group">
-            <label for="imageInput">Movie poster:</label>
-            <input type="file" class="form-control" id="imageInput" name="image" accept="image/*" onchange="handleImageUpload(event)">
-            <img id="imagePreview" src="{{ image_path|default:'' }}" alt="Предпросмотр" style="max-width: 200px; margin-top: 10px; {% if not image_path %}display: none;{% endif %}">
-            <input type="hidden" id="pictureId" name="picture_id" value="{{ picture_id|default:'' }}">
+            <label for="image">Movie poster:</label>
+            <input type="file" class="form-control" id="image"
+             name="image" accept="image/*" required value="{{ image_path|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label for="torrent">Torrent file:</label>
+            <input type="file" class="form-control" id="torrent"
+             name="torrent" accept=".torrent" required value="{{ torrent_file_id|default:'' }}">
         </div>
         <div class="form-group">
             <label>Tags:</label>

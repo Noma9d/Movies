@@ -68,29 +68,3 @@ function removeSelectedActors() {
         select.remove(selected[i].index);
     }
 }
-
-// Загрузка изображения
-function handleImageUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
-
-        fetch('/upload_image/', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('imagePreview').src = data.image_path;
-                document.getElementById('imagePreview').style.display = 'block';
-                document.getElementById('pictureId').value = data.picture_id;
-            }
-        })
-        .catch(error => console.error('Ошибка:', error));
-    }
-}

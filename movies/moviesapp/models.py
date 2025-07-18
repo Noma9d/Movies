@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 import os
+from django.core.files.storage import default_storage
 
 
 # -------------------------------------------------
@@ -106,8 +107,8 @@ class Actor(models.Model):
 class Picture(models.Model):
     """Image file that can be referenced by many :class:`Record`s."""
 
-    name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to=upload_to_picture)
+    name = models.CharField(max_length=255)
+    image = models.ImageField(upload_to="images/", max_length=255)
 
     class Meta:
         ordering = ["name"]
@@ -136,6 +137,28 @@ class Picture(models.Model):
             setattr(self, field, value)
         self.save(update_fields=list(kwargs.keys()))
         return self
+    
+
+
+
+# -------------------------------------------------
+# Custom manager for Torrent files
+# -------------------------------------------------
+
+
+class TorrentFile(models.Model):
+
+    name = models.CharField(max_length=255)
+    file_path = models.FileField(upload_to="torrents/", max_length=255)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "TorrentFile"
+        verbose_name_plural = "TorrentFiles"
+
+    def __str__(self) -> str:  # pragma: no cover
+        return self.name
+
 
 
 # -------------------------------------------------
@@ -175,22 +198,31 @@ class RecordManager(models.Manager):
 class Record(models.Model):
     """A generic downloadable item (movie, track, doc, etc.)."""
 
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     release_date = models.DateField()
     genre = models.CharField(max_length=50)
     extension = models.CharField(max_length=10)
     size = models.PositiveBigIntegerField(help_text="File size in bytes")
-    download_url = models.URLField(max_length=200)
+    download_url = models.URLField(max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
 
-    picture = models.ForeignKey(
-        Picture,
-        on_delete=models.SET_NULL,
+    torrent_file = models.ForeignKey(
+        TorrentFile,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name="records",
     )
+
+    picture = models.ForeignKey(
+        Picture,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="records",
+    )
+
     tags = models.ManyToManyField(Tag, related_name="records", blank=True)
     actors = models.ManyToManyField(Actor, related_name="records", blank=True)
 
@@ -218,6 +250,18 @@ class Record(models.Model):
         self.save(update_fields=list(kwargs.keys()))
         return self
 
-    def delete(self, *args, **kwargs):  # noqa: D401  (simple one‑liner description)
-        """Delete record and keep its picture file untouched."""
+    def delete(self, *args, **kwargs):
+        # Удаляем файл постера, если есть
+        if self.picture and self.picture.image:
+            if default_storage.exists(self.picture.image.name):
+                self.picture.image.delete(save=False)
+            self.picture.delete()
+
+        # Удаляем файл торрент, если есть
+        if self.torrent_file and self.torrent_file.file_path:
+            if default_storage.exists(self.torrent_file.file_path.name):
+                self.torrent_file.file_path.delete(save=False)
+            self.torrent_file.delete()
+
+        # Затем удаляем сам объект Record
         super().delete(*args, **kwargs)

@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Регистрация{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block stylesheets %}
 {{ block.super }}
@@ -11,36 +11,36 @@
 {% endblock %}
 {% block content %}
 <div class="register-card">
-    <h2>Регистрация</h2>
+    <h2>Register</h2>
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="username">Имя пользователя:</label>
-            <input type="text" id="username" name="username" placeholder="Ввудите ваше имя" required>
+            <label for="username">User name:</label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
         </div>
         <div class="form-group">
-            <label for="email">Электронная почта:</label>
+            <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
         </div>
         <div class="form-group position-relative">
-            <label for="password1">Пароль:</label>
-            <input type="password" id="password1" name="password1" placeholder="Не меньше 8 символов" required>
+            <label for="password1">Password:</label>
+            <input type="password" id="password1" name="password1" placeholder="password" required>
             <span class="toggle-password" onclick="togglePassword('password1', this)" style="cursor:pointer;position:absolute;right:10px;top:38px;">
                 👁️
             </span>
         </div>
         <div class="form-group position-relative">
-            <label for="password2">Повторите пароль:</label>
-            <input type="password" id="password2" name="password2" placeholder="Пароли должны совпадать" required>
+            <label for="password2">Repeat password:</label>
+            <input type="password" id="password2" name="password2" placeholder="Passwords must match" required>
             <span class="toggle-password" onclick="togglePassword('password2', this)" style="cursor:pointer;position:absolute;right:10px;top:38px;">
                 👁️
             </span>
         </div>
-        <button type="submit" class="btn-primary">Зарегистрироваться</button>
+        <button type="submit" class="btn-primary">Register</button>
     </form>
     <div class="login-link">
-        <p >Уже есть аккаунт? </p>
-        <a href="{% url "moviesapp:login" %}">Войти</a>
+        <p >Already have an account? </p>
+        <a href="{% url "moviesapp:login" %}">Login</a>
     </div>
 </div>
 {% endblock %}

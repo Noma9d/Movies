@@ -2,12 +2,12 @@
 
 {% load static %}
 
-{% block title %}Галерея изображений{% endblock %}
+{% block title %}Image Gallery{% endblock %}
 
 
 {% block content %}
 <div class="container">
-    <h1 class="mb-4" style="color: rgb(46, 44, 44);">Галерея изображений</h1>
+    <h1 class="mb-4" style="color: rgb(46, 44, 44);">Image Gallery</h1>
     <div class="d-flex flex-row flex-wrap gap-3 justify-content-center">
         {% for picture in pictures %}
             <div class="card shadow-sm mb-3" style="min-width: 220px; max-width: 220px;">
@@ -19,7 +19,7 @@
                 </div>
             </div>
         {% empty %}
-            <div class="text-center w-100">Нет изображений.</div>
+            <div class="text-center w-100">No iamage.</div>
         {% endfor %}
     </div>
 </div>

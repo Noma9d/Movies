@@ -22,7 +22,8 @@
                 </a> </p>
         <p><strong>Extension:</strong> {{ movie.extension }}</p>
         <p><strong>Size:</strong> {{ movie.size }} Mb</p>
-        <p><strong>Download:</strong> <a href="{{ movie.download_url }}" class="btn btn-success" target="_blank">Download from url</a></p>
+        <p><strong>Download from url:</strong> <a href="{{ movie.download_url }}" class="btn btn-success" target="_blank">Download from url</a></p>
+        <p><strong>Download torrent</strong><a href="{{ movie.torrent_file.file_path }}" class="btn btn-success" target="_blank">torrent</a></p>
         <p><strong>Actors:
             {% if movie.actors %}
               {% for actor in movie.actors.all %}
