@@ -29,7 +29,12 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = os.environ.get("DJANGO_DEBUG")
 
 # Добавляем домен или IP-адрес сервера
-ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOSTS")]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(',')
+
+# SSL settings based on DEBUG mode
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
 
 # Application definition
@@ -77,7 +82,6 @@ WSGI_APPLICATION = "movies.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-print(os.environ.get("DB_NAME"))
 
 
 DATABASES = {
@@ -136,7 +140,3 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "moviesapp:login"
-
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
