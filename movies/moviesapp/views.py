@@ -413,10 +413,9 @@ def add_picture(request) -> render:
         # Сохраняем файл
         image_dir = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "moviesapp",
-            "static",
+            "media",
             "movies",
-            "posters",
+            "images",
         )
         os.makedirs(image_dir, exist_ok=True)
         filename = image_file.name
@@ -424,7 +423,7 @@ def add_picture(request) -> render:
         with open(filepath, "wb+") as destination:
             for chunk in image_file.chunks():
                 destination.write(chunk)
-        image_path = f"/static/movies/posters/{filename}"
+        image_path = f"/media/movies/images/{filename}"
         picture = Picture(name=name, image=image_path)
         picture.save()
         messages.success(request, "Изображение успешно добавлено!")
@@ -541,8 +540,7 @@ def upload_image(request) -> JsonResponse:
         # Создаем директорию для изображений, если её нет
         image_dir = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "moviesapp",
-            "static",
+            "media",
             "movies",
             "posters",
         )
@@ -555,7 +553,7 @@ def upload_image(request) -> JsonResponse:
                 destination.write(chunk)
 
         # Получаем относительный путь к файлу
-        image_path = f"/static/movies/posters/{filename}"
+        image_path = f"/media/movies/posters/{filename}"
 
         # Создаем новую запись для изображения
 

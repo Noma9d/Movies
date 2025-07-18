@@ -19,13 +19,13 @@
 
       <h1>
         {% if filter_type == "tag" %}
-          Movies tagged “{{ value }}”
+          Movies tagged "{{ value }}"
         {% elif filter_type == "actor" %}
-          Movies with actor “{{ value }}”
+          Movies with actor "{{ value }}"
         {% elif filter_type == "year" %}
           Movies released in {{ value }}
         {% elif filter_type == "genre" %}
-          Movies in genre “{{ value }}”
+          Movies in genre "{{ value }}"
         {% endif %}
       </h1>
 
