@@ -3,13 +3,13 @@
 {% block content %}
 <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
     <div class="card shadow p-4 mb-4 bg-white rounded text-center" style="max-width: 600px; width: 100%;">
-        <h2 class="mb-3">Удалить изображение</h2>
+        <h2 class="mb-3">Delete image</h2>
         <img src="{{ picture.image }}" alt="{{ picture.name }}" class="mb-3" style="max-width: 100%; height: auto;">
-        <p>Вы уверены, что хотите удалить изображение <strong>{{ picture.name }}</strong>?</p>
+        <p>Are you sure you want to delete the image? <strong>{{ picture.name }}</strong>?</p>
         <form method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Удалить</button>
-            <a href="{% url "moviesapp:picture_detail" picture.id %}" class="btn btn-secondary">Отмена</a>
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url "moviesapp:picture_detail" picture.id %}" class="btn btn-secondary">Cancell</a>
         </form>
     </div>
 </div>

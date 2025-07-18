@@ -431,9 +431,6 @@ def add_picture(request) -> render:
     return render(request, "moviesapp/add_picture.html")
 
 
-
-
-
 def main(request) -> render:
     # Получаем все фильмы
     movies = Record.objects.all()

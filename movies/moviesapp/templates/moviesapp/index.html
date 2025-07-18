@@ -19,19 +19,19 @@ ul.list-unstyled, ul.list-unstyled li {
                     <li class="mb-4">
                         <div class="d-flex align-items-start">
                             {% if movie.picture %}
-                                <img src="{{ movie.picture.image_path }}" class="me-3" style="max-width: 150px;" alt="{{ movie.title }}">
+                                <img src="{{ movie.picture.image_path }}" class="me-3" style="max-width: 250px;" alt="{{ movie.title }}">
                             {% endif %}
                             <div>
                                 <a href="{% url "moviesapp:movie_detail" movie.id %}"><strong>{{ movie.title }}</strong></a>
                                 <br><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
                                 {{ movie.description }}<br>
                                 <small class="text-muted">
-                                    Жанр: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
+                                    Genre: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
                                           {{ movie.genre }}
                                           </a> <br>
-                                    Размер: {{ movie.size }} Mb<br>
+                                    Size: {{ movie.size }} Mb<br>
                                     {% if movie.actors %}
-                                    Актёры:
+                                    Actor:
                                       {% for actor in movie.actors %}
                                         <a href="{% url "moviesapp:movies_filter" "actor" actor %}">
                                           {{ actor }}
@@ -40,7 +40,7 @@ ul.list-unstyled, ul.list-unstyled li {
                                     {% endif %}
                                   {% if movie.tags %}
                                       <div class="mt-2">
-                                          <strong>Теги:</strong>
+                                          <strong>Tag:</strong>
                                           {% for tag in movie.tags %}
                                               <a href="{% url "moviesapp:movies_filter" "tag" tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
                                           {% endfor %}

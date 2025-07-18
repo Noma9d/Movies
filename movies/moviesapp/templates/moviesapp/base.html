@@ -38,22 +38,22 @@
         <nav class="navbar" style="background-color: #afbbc4;" data-bs-theme="light">
             <div class="container-fluid justify-content-center">
                 <div class="d-flex flex-row align-items-center w-100 justify-content-center" style="gap: 1rem;">
-                    <a class="navbar-brand " href="{% url "moviesapp:main" %}">Главная</a>
-                    <a class="navbar-brand" href="{% url "moviesapp:pictures_list" %}">Фото</a>
+                    <a class="navbar-brand " href="{% url "moviesapp:main" %}">Home</a>
+                    <a class="navbar-brand" href="{% url "moviesapp:pictures_list" %}">Image</a>
                     {% if user.is_authenticated %}
-                        <a class="navbar-brand" href=" {% url "moviesapp:logout" %}">Выйти</a>
+                        <a class="navbar-brand" href=" {% url "moviesapp:logout" %}">Log out</a>
                     {% else %}
-                        <a class="navbar-brand" href="{% url "moviesapp:login" %}">Войти</a>
-                        <a class="navbar-brand" href="{% url "moviesapp:register" %}">Регистрация</a>
+                        <a class="navbar-brand" href="{% url "moviesapp:login" %}">Login</a>
+                        <a class="navbar-brand" href="{% url "moviesapp:register" %}">Register</a>
                     {% endif %}
                     {% if user.is_authenticated %}
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Добавить данные
+                            Add data
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url "moviesapp:add_movie" %}">Добавить фильм</a></li>
-                            <li><a class="dropdown-item" href="{% url "moviesapp:add_picture" %}">Добавить фото</a></li>
+                            <li><a class="dropdown-item" href="{% url "moviesapp:add_movie" %}">Add movie</a></li>
+                            <li><a class="dropdown-item" href="{% url "moviesapp:add_picture" %}">Add Image</a></li>
                         </ul>
                     </div>
                     {% endif %}
@@ -87,8 +87,8 @@
     <footer>
         <p>&copy; {{ year|default:2025 }} Movies</p>
         <nav style="margin-top: 1rem;">
-            <a href="{% url "moviesapp:about" %}">О проекте</a>
-            <a href="{% url "moviesapp:contact" %}">Контакты</a>
+            <a href="{% url "moviesapp:about" %}">About project</a>
+            <a href="{% url "moviesapp:contact" %}">Contact</a>
         </nav>
     </footer>
 </body>

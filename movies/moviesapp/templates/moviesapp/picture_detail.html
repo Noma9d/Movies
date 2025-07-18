@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}{{ picture.name }} - Детали изображения{% endblock %}
+{% block title %}{{ picture.name }}{% endblock %}
 
 
 {% block content %}
@@ -10,21 +10,21 @@
     <div class="card shadow p-4 mb-4 bg-white rounded text-center" style="max-width: 800px; width: 100%;">
         <img src="{{ picture.image_path }}" alt="{{ picture.name }}" class="mb-3" style="max-width: 100%; height: auto;">
         <h4 class="mb-3">{{ picture.name }}</h4>
-        <a href="{{ picture.image_path }}" class="btn btn-success mb-3" download>Скачать изображение</a>
+        <a href="{{ picture.image_path }}" class="btn btn-success mb-3" download>Download image</a>
         {% if picture.movie %}
             <div class="alert alert-info mb-3">
-                Это постер к фильму: <a href="{% url "moviesapp:movie_detail" picture.movie.id %}">{{ picture.movie.title }}</a>
+                This is a movie poster: <a href="{% url "moviesapp:movie_detail" picture.movie.id %}">{{ picture.movie.title }}</a>
             </div>
         {% else %}
-            <div class="alert alert-secondary mb-3">Это изображение не связано с фильмом.</div>
+            <div class="alert alert-secondary mb-3">This image is not related to the movie..</div>
             {% if user.is_authenticated %}
-            <a href="{% url "moviesapp:delete_picture" picture.id %}" class="btn btn-danger mb-3">Удалить изображение</a>
+            <a href="{% url "moviesapp:delete_picture" picture.id %}" class="btn btn-danger mb-3">Delete image</a>
             {% endif %}
             {% if not user.is_authenticated %}
-            <p>Войдите, чтобы иметь возможность удалять изображения.</p>
+            <p>Log in to be able to delete images.</p>
             {% endif %}
         {% endif %}
-        <a href="{% url "moviesapp:pictures_list" %}" class="btn btn-primary">Назад к галерее</a>
+        <a href="{% url "moviesapp:pictures_list" %}" class="btn btn-primary">Back to gallery</a>
     </div>
 </div>
 {% endblock %}

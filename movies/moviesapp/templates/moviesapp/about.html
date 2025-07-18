@@ -1,27 +1,27 @@
 {# templates/about.html #}
 {% extends "moviesapp/base.html" %}
 
-{% block title %}О проекте{% endblock %}
+{% block title %}About project{% endblock %}
 
 {% block content %}
 <div class="container my-5 d-flex justify-content-center">
     <div class="card shadow-lg p-4" style="max-width: 720px; width: 100%;">
-        <h1 class="card-title text-center mb-4">О проекте</h1>
+        <h1 class="card-title text-center mb-4">About project</h1>
 
         <p>
-            Этот сайт создан для хранения и&nbsp;просмотра информации о&nbsp;фильмах, актёрах и&nbsp;тегах.
-            Здесь вы можете найти подробные описания фильмов, ознакомиться с&nbsp;актёрским составом и&nbsp;подобрать фильмы по&nbsp;интересующим вас тегам.
+            This site is designed to store and view information about movies, actors and tags.
+            Here you can find detailed descriptions of movies, see the cast and select movies by the tags that interest you.
         </p>
 
-        <h2 class="h5 mt-4">Возможности</h2>
+        <h2 class="h5 mt-4">Possibilities</h2>
         <ul class="ms-3">
-            <li>Просмотр списка фильмов</li>
-            <li>Поиск по тегам и&nbsp;актёрам</li>
-            <li>Добавление и&nbsp;редактирование информации (для авторизованных пользователей)</li>
+            <li>View list of movies</li>
+            <li>Search by tags and actors</li>
+            <li>Adding and editing information (for authorized users)</li>
         </ul>
 
         <p class="text-end mb-0">
-            Проект разработан на&nbsp;Django &copy; {{ year|default:2025 }}
+            The project was developed on&nbsp;Django &copy; {{ year|default:2025 }}
         </p>
     </div>
 </div>

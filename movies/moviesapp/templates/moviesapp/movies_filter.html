@@ -42,12 +42,12 @@
                                 <br><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
                                 {{ movie.description }}<br>
                                 <small class="text-muted">
-                                    Жанр: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
+                                    Genre: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
                                           {{ movie.genre }}
                                           </a> <br>
-                                    Размер: {{ movie.size }} МБ<br>
+                                    Size: {{ movie.size }} МБ<br>
                                     {% if movie.actors %}
-                                        Актеры:
+                                        Actors:
                                       {% for actor in movie.actors %}
                                         <a href="{% url "moviesapp:movies_filter" "actor" actor %}">
                                           {{ actor }}

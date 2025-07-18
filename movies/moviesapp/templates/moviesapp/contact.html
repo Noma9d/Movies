@@ -1,6 +1,6 @@
 {% extends "moviesapp/base.html" %}
 
-{% block title %}Связаться с нами{% endblock %}
+{% block title %}Contact us{% endblock %}
 
 {% load static %}
 
@@ -10,21 +10,21 @@
 {% endblock %}
 {% block content %}
     <div class="container-1">
-        <h1>Связаться с нами</h1>
+        <h1>Contact us</h1>
         <div class="info">
-            <p>Если у вас есть вопросы или предложения, заполните форму ниже или напишите нам на <a href="mailto:info@moviesapp.uа">info@moviesapp.uа</a>.</p>
+            <p>If you have any questions or suggestions, please fill out the form below or write to us at <a href="mailto:info@moviesapp.uа">info@moviesapp.uа</a>.</p>
         </div>
         <form method="post">
-            <label for="name">Имя</label>
+            <label for="name">Name</label>
             <input type="text" id="name" name="name" required>
 
-            <label for="email">Электронная почта</label>
+            <label for="email">Email</label>
             <input type="email" id="email" name="email" required>
 
-            <label for="message">Сообщение</label>
+            <label for="message">Message</label>
             <textarea id="message" name="message" rows="5" required></textarea>
 
-            <button type="submit">Отправить</button>
+            <button type="submit">Send</button>
         </form>
     </div>
 {% endblock %}
