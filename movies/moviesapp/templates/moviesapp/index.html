@@ -19,7 +19,7 @@ ul.list-unstyled, ul.list-unstyled li {
                     <li class="mb-4">
                         <div class="d-flex align-items-start">
                             {% if movie.picture %}
-                                <img src="{{ movie.picture.image_path.url }}" class="me-3" style="width: 150px; height: 250px;" alt="{{ movie.title }}">
+                                <img src="{{ movie.picture.image_path.url }}" class="me-3" style="max-width: 300px; max-height: 250px;" alt="{{ movie.title }}">
                             {% endif %}
                             <div style="max-width: 600px;">
                                 <a href="{% url 'moviesapp:movie_detail' movie.id %}"><strong>{{ movie.title }}</strong></a>

@@ -148,7 +148,48 @@ class Picture(models.Model):
         super().delete(*args, **kwargs)
     
 
+class ScreeList(models.Model):
+    """Image file that can be referenced by many :class:`Record`s."""
 
+    name = models.CharField(max_length=255)
+    unique_name = models.CharField(max_length=255, unique=True, blank=True)  # Unique name for the picture
+    # Use a custom upload path to avoid collisions
+    image_path = models.ImageField(upload_to="images/", max_length=255)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "ScreenList"
+        verbose_name_plural = "ScreenLists"
+
+    def __str__(self) -> str:  # pragma: no cover
+        return self.name
+
+    # --- CRUD helpers ---
+    @classmethod
+    def get_all(cls):
+        return cls.objects.all()
+
+    @classmethod
+    def get_by_id(cls, picture_id: int):
+        return cls.objects.filter(id=picture_id).first()
+
+    @classmethod
+    def get_by_path(cls, path: str):
+        return cls.objects.filter(image=path).first()
+
+    def update(self, **kwargs):
+        # Supports changing name and/or image
+        for field, value in kwargs.items():
+            setattr(self, field, value)
+        self.save(update_fields=list(kwargs.keys()))
+        return self
+    
+    def delete(self, *args, **kwargs):
+        # Delete the image file from storage
+        if self.image and default_storage.exists(self.image.name):
+            self.image.delete(save=False)
+        # Then delete the Picture instance
+        super().delete(*args, **kwargs)
 
 # -------------------------------------------------
 # Custom manager for Torrent files
@@ -217,7 +258,7 @@ class Record(models.Model):
     """A generic downloadable item (movie, track, doc, etc.)."""
 
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     release_date = models.DateField()
     genre = models.CharField(max_length=50)
     extension = models.CharField(max_length=10)
@@ -235,6 +276,14 @@ class Record(models.Model):
 
     picture = models.ForeignKey(
         Picture,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="records",
+    )
+
+    screenlist = models.ForeignKey(
+        ScreeList,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

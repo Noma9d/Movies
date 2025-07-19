@@ -1,0 +1,14 @@
+{% extends "moviesapp/base.html" %}
+
+{% load static %}
+
+{% block title %}{{ picture.name }}{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 20px;">
+    <img src="{{ screenlist.image_path.url }}" alt="{{ screenlist.name }}" style="max-width: 100%; height: auto;">
+    <div class="mt-4">
+        <a href="{% url "moviesapp:movie_detail" screenlist.movie.id %}" class="btn btn-primary" style="max-width: 250px; max-height: 50px;">Back to movie</a>
+    </div>
+</div>
+{% endblock %}

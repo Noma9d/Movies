@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.templatetags.static import static
-from .models import Record, Tag, Actor, Picture, TorrentFile
+from .models import Record, Tag, Actor, Picture, TorrentFile, ScreeList
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -12,7 +12,6 @@ from datetime import date
 from django.http import Http404
 from django.db.models import Count, Q
 from .utils import save_uploaded_file
-from django.conf import settings as django_settings
 
 
 FILTERS = {
@@ -103,6 +102,7 @@ def add_movie(request) -> render:
         tags_name = request.POST.getlist("tags")
         picture = request.FILES.get("image")
         torrent_file = request.FILES.get("torrent")
+        screenlist = request.FILES.get("screenlist")
         all_actor = Actor.objects.all()
         all_tag = Tag.objects.all()
 
@@ -300,7 +300,33 @@ def add_movie(request) -> render:
             )
             torrent_file_id = torrent_file.id
 
-        
+        if screenlist:
+            # Сохраняем загруженный скринлист
+            result, error_message = save_uploaded_file(screenlist, FILE_EXT, target_dir="movies/screenlists")
+            if error_message:
+                messages.error(request, error_message)
+                return render(
+                    request,
+                    "moviesapp/add_movie.html",
+                    {
+                        "title": title,
+                        "description": description,
+                        "year": year,
+                        "genre": genre,
+                        "extension": extension,
+                        "size": size,
+                        "download_url": download_url,
+                        "actors": actors_name,
+                        "tags": tags_name,
+                    },
+                )
+            (filename, unique_screenlist_filename, relative_path) = result
+            # Создаем запись в БД для скринлиста
+            screenlist, _ = ScreeList.objects.get_or_create(
+                name=filename, unique_name=unique_screenlist_filename, image_path=relative_path
+            )        
+
+            screenlist_id = screenlist.id
         
         # Создаем новый фильм
         new_movie = Record.objects.create(
@@ -313,6 +339,7 @@ def add_movie(request) -> render:
             download_url=download_url,
             picture_id=picture_id if picture else None,
             torrent_file_id=torrent_file_id if torrent_file else None,
+            screenlist_id=screenlist_id if screenlist else None,
         )
 
         # Добавляем существующих актеров и теги
@@ -338,7 +365,7 @@ def add_movie(request) -> render:
 
 def movie_detail(request, movie_id: int):
     movie = get_object_or_404(
-        Record.objects.select_related("picture", "torrent_file").prefetch_related("actors", "tags"),
+        Record.objects.select_related("picture", "torrent_file", "screenlist").prefetch_related("actors", "tags"),
         pk=movie_id,
     )
     return render(request, "moviesapp/movie_detail.html", {"movie": movie})
@@ -349,6 +376,7 @@ def edit_movie(request, movie_id: int) -> render:
     movie = get_object_or_404(Record, pk=movie_id)
     old_picture = Picture.objects.filter(id=movie.picture_id).first() if movie.picture_id else None
     old_torrent_file = TorrentFile.objects.filter(id=movie.torrent_file_id).first() if movie.torrent_file_id else None
+    old_screenlist = ScreeList.objects.filter(id=movie.screenlist_id).first() if movie.screenlist_id else None
     if request.method == "POST":
         movie.title = request.POST.get("title")
         movie.description = request.POST.get("description")
@@ -424,6 +452,26 @@ def edit_movie(request, movie_id: int) -> render:
             movie.torrent_file = torrent_file_obj
             movie.save()
 
+        screen_list = request.FILES.get("screenlist")
+        if screen_list:
+            # Удаляем старый скринлист, если он есть
+            if old_screenlist:
+                old_screenlist.delete()
+
+            # Сохраняем загруженный скринлист
+            result, error_message = save_uploaded_file(screen_list, FILE_EXT)
+            if error_message:
+                messages.error(request, error_message)
+                return redirect("moviesapp:edit_movie", movie_id=movie.id)
+            
+            (filename, unique_screenlist_filename, relative_path) = result
+            # Создаем или обновляем запись в БД для скринлиста
+            screenlist, _ = ScreeList.objects.get_or_create(
+                name=filename, unique_name=unique_screenlist_filename, image_path=relative_path
+            )
+            movie.screenlist = screenlist
+            movie.save()
+
         return redirect("moviesapp:movie_detail", movie_id=movie.id)
 
     
@@ -447,6 +495,7 @@ def edit_movie(request, movie_id: int) -> render:
             "selected_actors": movie.actors.all(),
             "selected_tags": movie.tags.all(),
             "image_path": old_picture.image if old_picture else None,
+            "screenlist_path": old_screenlist.image_path if old_screenlist else None,
             "edit_mode": True,
             "movie_id": movie.id,
         },
@@ -692,7 +741,9 @@ def search(request):
             Q(title__icontains=q) |
             Q(description__icontains=q) |
             Q(actors__name__icontains=q) |
-            Q(tags__name__icontains=q)
+            Q(tags__name__icontains=q) |
+            Q(genre__icontains=q) |
+            Q(extension__icontains=q)
         ).distinct()
 
     formatted_movies = []
@@ -734,3 +785,18 @@ def search(request):
         "params": request.GET.urlencode()  # Сохраняем параметры для пагинации
     }
     return render(request, "moviesapp/search_results.html", context)
+
+
+def screenlist_detail(request, screenlist_id: int) -> render:
+    screenlist = get_object_or_404(ScreeList, pk=screenlist_id)
+    image_path = screenlist.image_path
+    movie = Record.objects.filter(screenlist_id=screenlist.id).first()
+    data = {
+        "screenlist": {
+            "id": screenlist.id,
+            "name": screenlist.name,
+            "image_path": image_path,
+            "movie": {"id": movie.id, "title": movie.title} if movie else None,
+        }
+    }
+    return render(request, "moviesapp/screenlist_detail.html", data)

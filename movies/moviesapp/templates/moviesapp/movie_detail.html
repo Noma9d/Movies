@@ -8,12 +8,12 @@
 {% block content %}
 <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
     <div class="card shadow p-4 mb-4 bg-white rounded" style="max-width: 800px; width: 100%;">
+        <h4 class="mb-3"><small>{{ movie.title }}</small></h4>
         <div class="d-flex">
             {% if movie.picture %}
-                <img src="{{ movie.picture.image.url }}" class="me-3 mb-3" style="width: 300px; height: 500px;" alt="{{ movie.title }}">
+                <img src="{{ movie.picture.image.url }}" class="me-3 mb-3" style="max-width: 300px; max-height: 500px;" alt="{{ movie.title }}">
             {% endif %}
             <div>
-                <h1 class="mb-3">{{ movie.title }}</h1>
                 <p><strong>Release date:</strong> <a href="{% url 'moviesapp:movies_filter' 'year' movie.release_date %}">{{ movie.release_date }}</a></p>
                 <p><strong>Genre:</strong> <a href="{% url 'moviesapp:movies_filter' 'genre' movie.genre %}">{{ movie.genre }}</a></p>
                 <p><strong>Extension:</strong> {{ movie.extension }}</p>
@@ -39,6 +39,17 @@
         </div>
         <div class="mt-4">
             <p><strong>Description:</strong> {{ movie.description }}</p>
+        </div>
+        <div class="mt-4">
+            <h5>Screenlist:</h5>
+            {% if movie.screenlist %}
+                <a href="{% url "moviesapp:screenlist_detail" movie.screenlist.id %}">
+                    <img src="{{ movie.screenlist.image_path.url }}"
+                     alt="{{ movie.screenlist.name }}" class="img-fluid mb-3" style="width: 200px; height: 200px;">
+                </a>
+            {% else %}
+                <p>No screenlist available.</p>
+            {% endif %}
         </div>
         <div class="text-center mt-4">
             {% if not user.is_authenticated %}

@@ -22,8 +22,43 @@
             <input type="text" class="form-control" id="title" name="title" required value="{{ title|default:'' }}" placeholder="This is a required field.">
         </div>
         <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea class="form-control" id="description" name="description" rows="3" required>{{ description|default:'' }}</textarea>
+            <label for="torrent">Torrent file:</label>
+            <input type="file" class="form-control" id="torrent"
+             name="torrent" accept=".torrent"{% if not torrent_path %} required {% endif %}">
+        </div>
+        <div class="form-group">
+            <label for="image">
+              {% if edit_mode %}
+                Upload new movie poster (optional):
+              {% else %}
+                Movie poster:
+              {% endif %}
+            </label>
+            <input type="file" class="form-control" id="image"
+             name="image" accept="image/*" {% if not image_path %} required {% endif %}">
+            {% if image_path %}
+                <div style="margin-bottom: 10px;">
+                    <p>Current poster:</p>
+                    <img src="{{ image_path.url }}" alt="Current poster" style="max-width: 200px; height: auto;">
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="image">
+              {% if edit_mode %}
+                Upload new screenlist poster:
+              {% else %}
+                Movie screenlist:
+              {% endif %}
+            </label>
+            <input type="file" class="form-control" id="screenlist"
+             name="screenlist" accept="image/*" {% if not screenlist_path %} required {% endif %}">
+            {% if screenlist_path %}
+                <div style="margin-bottom: 10px;">
+                    <p>Current screenlist:</p>
+                    <img src="{{ screenlist_path.url }}" alt="Current poster" style="max-width: 200px; height: auto;">
+                </div>
+            {% endif %}
         </div>
         <div class="form-group">
             <label for="year">Year of issue:</label>
@@ -47,35 +82,18 @@
             <label for="extension">File extension:</label>
             <input type="text" class="form-control" id="extension" name="extension" placeholder="For example: mp4, mkv, avi, mov, flv" required value="{{ extension|default:'' }}">
         </div>
-        <div class="form-group">
-            <label for="size">File size (MB):</label>
-            <input type="number" class="form-control" id="size" name="size" min="0" required value="{{ size|default:'' }}">
-        </div>
+        
         <div class="form-group">
             <label for="download_url">Download url:</label>
             <input type="url" class="form-control" id="download_url" name="download_url" required value="{{ download_url|default:'' }}", placeholder="This is a required field.">
+        </div>        
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required>{{ description|default:'' }}</textarea>
         </div>
         <div class="form-group">
-            <label for="image">
-              {% if edit_mode %}
-                Upload new movie poster (optional):
-              {% else %}
-                Movie poster:
-              {% endif %}
-            </label>
-            <input type="file" class="form-control" id="image"
-             name="image" accept="image/*" {% if not image_path %} required {% endif %}">
-            {% if image_path %}
-                <div style="margin-bottom: 10px;">
-                    <p>Current poster:</p>
-                    <img src="{{ image_path.url }}" alt="Current poster" style="max-width: 200px; height: auto;">
-                </div>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            <label for="torrent">Torrent file:</label>
-            <input type="file" class="form-control" id="torrent"
-             name="torrent" accept=".torrent"{% if not torrent_path %} required {% endif %}">
+            <label for="size">File size (MB):</label>
+            <input type="number" class="form-control" id="size" name="size" min="0" required value="{{ size|default:'' }}">
         </div>
         <div class="form-group">
             <label>Tags:</label>

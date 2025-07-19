@@ -24,11 +24,11 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
     path('search/', views.search, name='search'),
-    path("movies/filter/<str:filter_type>/<str:value>", views.movies_filter, name="movies_filter")
+    path("movies/filter/<str:filter_type>/<str:value>", views.movies_filter, name="movies_filter"),
+    path("screenlist/<int:screenlist_id>/", views.screenlist_detail, name="screenlist_detail"),
 ]
 
 """
     TODO:
-    
-    
+    сохранять структуру теста в поле описания
 """
