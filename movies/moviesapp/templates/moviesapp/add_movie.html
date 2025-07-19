@@ -4,6 +4,7 @@
 {% block title %}{% if edit_mode %}Edit movie{% else %}Add new movie{% endif %}{% endblock %}
 
 {% block styles %}
+{{ block.super }}
 {% endblock %}
 
 {% block scripts %}
@@ -55,14 +56,26 @@
             <input type="url" class="form-control" id="download_url" name="download_url" required value="{{ download_url|default:'' }}", placeholder="This is a required field.">
         </div>
         <div class="form-group">
-            <label for="image">Movie poster:</label>
+            <label for="image">
+              {% if edit_mode %}
+                Upload new movie poster (optional):
+              {% else %}
+                Movie poster:
+              {% endif %}
+            </label>
             <input type="file" class="form-control" id="image"
-             name="image" accept="image/*" required value="{{ image_path|default:'' }}">
+             name="image" accept="image/*" {% if not image_path %} required {% endif %}">
+            {% if image_path %}
+                <div style="margin-bottom: 10px;">
+                    <p>Current poster:</p>
+                    <img src="{{ image_path }}" alt="Current poster" style="max-width: 200px; height: auto;">
+                </div>
+            {% endif %}
         </div>
         <div class="form-group">
             <label for="torrent">Torrent file:</label>
             <input type="file" class="form-control" id="torrent"
-             name="torrent" accept=".torrent" required value="{{ torrent_file_id|default:'' }}">
+             name="torrent" accept=".torrent"{% if not torrent_path %} required {% endif %}">
         </div>
         <div class="form-group">
             <label>Tags:</label>

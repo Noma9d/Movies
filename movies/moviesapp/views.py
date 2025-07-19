@@ -1,6 +1,5 @@
 import os
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.templatetags.static import static
@@ -12,6 +11,8 @@ from django.core.paginator import Paginator
 from datetime import date
 from django.http import Http404
 from django.db.models import Count, Q
+from .utils import save_uploaded_file
+from django.conf import settings as django_settings
 
 
 FILTERS = {
@@ -241,10 +242,10 @@ def add_movie(request) -> render:
         
         if picture:
 
-            filename = picture.name
-            ext = os.path.splitext(filename)[1].lower()
-
-            if ext not in FILE_EXT:
+            # Сохраняем загруженный файл
+            result, error_message = save_uploaded_file(picture, FILE_EXT)
+            if error_message:
+                messages.error(request, error_message)
                 return render(
                     request,
                     "moviesapp/add_movie.html",
@@ -261,54 +262,20 @@ def add_movie(request) -> render:
                     },
                 )
 
-            settings = FILE_EXT[ext]
-            # Проверка размера
-            max_size = settings["max_size_mb"] * 1024 * 1024
-            if picture.size > max_size:
-                messages.error(
-                    request,
-                    f"Размер файла превышает {settings['max_size_mb']} МБ",
-                )
-                return render(
-                    request,
-                    "moviesapp/add_movie.html",
-                    {
-                        "title": title,
-                        "description": description,
-                        "year": year,
-                        "genre": genre,
-                        "extension": extension,
-                        "size": size,
-                        "download_url": download_url,
-                        "actors": actors_name,
-                        "tags": tags_name,
-                    },
-                )
-            # Создаем директорию, если она не существует
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            upload_dir = os.path.join(base_dir, settings["dir"])
-            os.makedirs(upload_dir, exist_ok=True)
-            # Сохраняем файл
-            filepath = os.path.join(upload_dir, filename)
-            with open(filepath, "wb+") as destination:
-                for chunk in picture.chunks():
-                    destination.write(chunk)
-            # Относительный путь для ссылки (используй '/' для URL)
-            relative_path = f"/{settings['dir']}/{filename}"
+            (filename, relative_path) = result
+
+            
             # Создаем запись в БД
-
             picture, _ = Picture.objects.get_or_create(
                 name=filename, image=relative_path
             )
             picture_id = picture.id
         
         if torrent_file:
-
-            filename = torrent_file.name
-            ext = os.path.splitext(filename)[1].lower()
-
-            if ext != ".torrent":
-                messages.error(request, "Неверный формат файла. Ожидается .torrent")
+            # Сохраняем загруженный торрент файл
+            result, error_message = save_uploaded_file(torrent_file, FILE_EXT)
+            if error_message:
+                messages.error(request, error_message)
                 return render(
                     request,
                     "moviesapp/add_movie.html",
@@ -324,43 +291,10 @@ def add_movie(request) -> render:
                         "tags": tags_name,
                     },
                 )
-
-            settings = FILE_EXT[ext]
-            # Проверка размера
-            max_size = settings["max_size_mb"] * 1024 * 1024
-            if torrent_file.size > max_size:
-                messages.error(
-                    request,
-                    f"Размер файла превышает {settings['max_size_mb']} МБ",
-                )
-                return render(
-                    request,
-                    "moviesapp/add_movie.html",
-                    {
-                        "title": title,
-                        "description": description,
-                        "year": year,
-                        "genre": genre,
-                        "extension": extension,
-                        "size": size,
-                        "download_url": download_url,
-                        "actors": actors_name,
-                        "tags": tags_name,
-                    },
-                )
-            # Создаем директорию, если она не существует
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            upload_dir = os.path.join(base_dir, settings["dir"])
-            os.makedirs(upload_dir, exist_ok=True)
-            # Сохраняем файл
-            filepath = os.path.join(upload_dir, filename)
-            with open(filepath, "wb+") as destination:
-                for chunk in torrent_file.chunks():
-                    destination.write(chunk)
-            # Относительный путь для ссылки (используй '/' для URL)
-            relative_path = f"/{settings['dir']}/{filename}"
+            
+            (filename, relative_path) = result
+            
             # Создаем запись в БД
-
             torrent_file, _ = TorrentFile.objects.get_or_create(
                 name=filename, file_path=relative_path
             )
@@ -413,6 +347,7 @@ def movie_detail(request, movie_id: int):
 @login_required
 def edit_movie(request, movie_id: int) -> render:
     movie = get_object_or_404(Record, pk=movie_id)
+    old_picture = Picture.objects.filter(id=movie.picture_id).first() if movie.picture_id else None
     if request.method == "POST":
         movie.title = request.POST.get("title")
         movie.description = request.POST.get("description")
@@ -421,14 +356,17 @@ def edit_movie(request, movie_id: int) -> render:
         movie.extension = request.POST.get("extension")
         movie.size = request.POST.get("size")
         movie.download_url = request.POST.get("download_url")
+
         try:
             movie.release_date = date(int(year), 1, 1)
         except (ValueError, TypeError):
             movie.release_date = None
         movie.save()
+
         # Обновление актеров и тегов
         actors_name = request.POST.getlist("actors")
         tags_name = request.POST.getlist("tags")
+        
         # Обрабатываем актеров
         for actor_name in actors_name:
             actor, _ = Actor.objects.get_or_create(name=actor_name)
@@ -437,21 +375,53 @@ def edit_movie(request, movie_id: int) -> render:
         for tag_name in tags_name:
             tag, _ = Tag.objects.get_or_create(name=tag_name)
             movie.tags.add(tag)
+
+
         # Обновление постера
-        picture_id = request.POST.get("picture_id")
-        if picture_id:
-            movie.picture_id = picture_id
-            movie.save(update_fields=["picture_id"])
+        
+        picture = request.FILES.get("image")
+        if picture:
+            
+            # Сохраняем загруженный файл
+            result, error_message = save_uploaded_file(picture, FILE_EXT)
+            if error_message:
+                messages.error(request, error_message)
+                return redirect("moviesapp:edit_movie", movie_id=movie.id)
+
+            (filename, relative_path) = result
+
+            # Создаем или обновляем запись в БД
+            picture_obj, _ = Picture.objects.get_or_create(
+                name=filename, image=relative_path
+            )
+            movie.picture = picture_obj
+            movie.save()
+
+        # Обновление торрент файла
+        torrent_file = request.FILES.get("torrent")
+        if torrent_file:
+            # Сохраняем загруженный торрент файл
+            result, error_message = save_uploaded_file(torrent_file, FILE_EXT)
+            if error_message:
+                messages.error(request, error_message)
+                return redirect("moviesapp:edit_movie", movie_id=movie.id)
+
+            (filename, relative_path) = result
+
+            # Создаем или обновляем запись в БД
+            torrent_file_obj, _ = TorrentFile.objects.get_or_create(
+                name=filename, file_path=relative_path
+            )
+            movie.torrent_file = torrent_file_obj
+            movie.save()
+
         return redirect("moviesapp:movie_detail", movie_id=movie.id)
+
+    
     # Для GET-запроса — подготовка данных для формы
     all_actors = Actor.objects.all()
     all_tags = Tag.objects.all()
-    picture = (
-        Picture.objects.filter(id=movie.picture_id).first()
-        if movie.picture_id
-        else None
-    )
-    image_path = picture.image if picture else ""
+
     return render(
         request,
         "moviesapp/add_movie.html",
@@ -468,7 +438,7 @@ def edit_movie(request, movie_id: int) -> render:
             "selected_actors": movie.actors.all(),
             "selected_tags": movie.tags.all(),
             "picture_id": movie.picture_id,
-            "image_path": image_path,
+            "image_path": old_picture.image if old_picture else None,
             "edit_mode": True,
             "movie_id": movie.id,
         },

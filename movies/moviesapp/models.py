@@ -209,7 +209,7 @@ class Record(models.Model):
 
     torrent_file = models.ForeignKey(
         TorrentFile,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="records",
@@ -217,7 +217,7 @@ class Record(models.Model):
 
     picture = models.ForeignKey(
         Picture,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="records",
@@ -251,6 +251,7 @@ class Record(models.Model):
         return self
 
     def delete(self, *args, **kwargs):
+        self.picture.image.name
         # Удаляем файл постера, если есть
         if self.picture and self.picture.image:
             if default_storage.exists(self.picture.image.name):
