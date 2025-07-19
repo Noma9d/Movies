@@ -27,14 +27,14 @@ FILTERS = {
 # Определяем настройки по расширению
 FILE_EXT = {
     # изображения
-    ".jpg": {"dir": "media/movies/posters", "model": "Picture", "max_size_mb": 5},
-    ".jpeg": {"dir": "media/movies/posters", "model": "Picture", "max_size_mb": 5},
-    ".png": {"dir": "media/movies/posters", "model": "Picture", "max_size_mb": 5},
-    ".gif": {"dir": "media/movies/posters", "model": "Picture", "max_size_mb": 5},
-    ".bmp": {"dir": "media/movies/posters", "model": "Picture", "max_size_mb": 5},
-    ".webp": {"dir": "media/movies/posters", "model": "Picture", "max_size_mb": 5},
+    ".jpg": {"dir": "movies/posters", "model": "Picture", "max_size_mb": 5},
+    ".jpeg": {"dir": "movies/posters", "model": "Picture", "max_size_mb": 5},
+    ".png": {"dir": "movies/posters", "model": "Picture", "max_size_mb": 5},
+    ".gif": {"dir": "movies/posters", "model": "Picture", "max_size_mb": 5},
+    ".bmp": {"dir": "movies/posters", "model": "Picture", "max_size_mb": 5},
+    ".webp": {"dir": "movies/posters", "model": "Picture", "max_size_mb": 5},
     # торрент
-    ".torrent": {"dir": "media/movies/torrents", "model": "TorrentFile", "max_size_mb": 10},
+    ".torrent": {"dir": "movies/torrents", "model": "TorrentFile", "max_size_mb": 10},
 }
 
 
@@ -381,7 +381,7 @@ def edit_movie(request, movie_id: int) -> render:
         
         picture = request.FILES.get("image")
         if picture:
-            
+
             # Сохраняем загруженный файл
             result, error_message = save_uploaded_file(picture, FILE_EXT)
             if error_message:
@@ -528,21 +528,14 @@ def delete_picture(request, picture_id: int) -> render:
 def add_picture(request) -> render:
     if request.method == "POST" and request.FILES.get("image"):
         image_file = request.FILES["image"]
-        name = request.POST.get("name", image_file.name)
-        # Сохраняем файл
-        image_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "media",
-            "movies",
-            "images",
-        )
-        os.makedirs(image_dir, exist_ok=True)
-        filename = image_file.name
-        filepath = os.path.join(image_dir, filename)
-        with open(filepath, "wb+") as destination:
-            for chunk in image_file.chunks():
-                destination.write(chunk)
-        image_path = f"/media/movies/images/{filename}"
+        
+        result, error_message = save_uploaded_file(image_file, FILE_EXT)
+        if error_message:
+            messages.error(request, error_message)
+            return render(request, "moviesapp/add_picture.html")
+        
+        (name, image_path) = result
+
         picture = Picture(name=name, image=image_path)
         picture.save()
         messages.success(request, "Изображение успешно добавлено!")

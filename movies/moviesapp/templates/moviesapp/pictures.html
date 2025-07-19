@@ -12,7 +12,7 @@
         {% for picture in pictures %}
             <div class="card shadow-sm mb-3" style="min-width: 220px; max-width: 220px;">
                 <a href="{% url "moviesapp:picture_detail" picture.id %}">
-                    <img src="{{ picture.image_path }}" class="card-img-top" alt="{{ picture.name }}" style="object-fit:cover; max-height:300px; min-height:200px;">
+                    <img src="{{ picture.image_path.url }}" class="card-img-top" alt="{{ picture.name }}" style="object-fit:cover; max-height:300px; min-height:200px;">
                 </a>
                 <div class="card-body text-center">
                     <h6 class="card-title">{{ picture.name }}</h6>

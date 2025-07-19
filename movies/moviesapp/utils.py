@@ -22,7 +22,7 @@ def save_uploaded_file(file, file_ext_map):
     if file.size > max_size:
         return None, f"Размер файла превышает {config['max_size_mb']} МБ"
 
-    upload_dir = os.path.join(django_settings.BASE_DIR, config["dir"])
+    upload_dir = os.path.join(django_settings.MEDIA_ROOT, config["dir"])
     os.makedirs(upload_dir, exist_ok=True)
 
     filepath = os.path.join(upload_dir, filename)
@@ -30,6 +30,6 @@ def save_uploaded_file(file, file_ext_map):
         for chunk in file.chunks():
             dest.write(chunk)
 
-    relative_path = f"/{config['dir']}/{filename}"
+    relative_path = os.path.join(config["dir"], filename)
 
     return (filename, relative_path), None

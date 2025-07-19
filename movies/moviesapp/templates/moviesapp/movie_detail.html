@@ -10,7 +10,7 @@
     <div class="card shadow p-4 mb-4 bg-white rounded" style="max-width: 500px; width: 100%;">
         <div class="text-center">
             {% if movie.picture %}
-                <img src="{{ movie.picture.image }}" class="me-3 mb-3" style="max-width: 350px;" alt="{{ movie.title }}">
+                <img src="{{ movie.picture.image.url }}" class="me-3 mb-3" style="max-width: 350px;" alt="{{ movie.title }}">
             {% endif %}
             <h1 class="mb-3">{{ movie.title }}</h1>
         </div>
@@ -23,7 +23,7 @@
         <p><strong>Extension:</strong> {{ movie.extension }}</p>
         <p><strong>Size:</strong> {{ movie.size }} Mb</p>
         <p><strong>Download from url:</strong> <a href="{{ movie.download_url }}" class="btn btn-success" target="_blank">Download from url</a></p>
-        <p><strong>Download torrent</strong><a href="{{ movie.torrent_file.file_path }}" class="btn btn-success" target="_blank">torrent</a></p>
+        <p><strong>Download torrent</strong><a href="{{ movie.torrent_file.file_path.url }}" class="btn btn-success" target="_blank">torrent</a></p>
         <p><strong>Actors:
             {% if movie.actors %}
               {% for actor in movie.actors.all %}

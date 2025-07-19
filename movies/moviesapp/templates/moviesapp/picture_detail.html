@@ -8,9 +8,9 @@
 {% block content %}
 <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
     <div class="card shadow p-4 mb-4 bg-white rounded text-center" style="max-width: 800px; width: 100%;">
-        <img src="{{ picture.image_path }}" alt="{{ picture.name }}" class="mb-3" style="max-width: 100%; height: auto;">
+        <img src="{{ picture.image_path.url }}" alt="{{ picture.name }}" class="mb-3" style="max-width: 100%; height: auto;">
         <h4 class="mb-3">{{ picture.name }}</h4>
-        <a href="{{ picture.image_path }}" class="btn btn-success mb-3" download>Download image</a>
+        <a href="{{ picture.image_path.url }}" class="btn btn-success mb-3" download>Download image</a>
         {% if picture.movie %}
             <div class="alert alert-info mb-3">
                 This is a movie poster: <a href="{% url "moviesapp:movie_detail" picture.movie.id %}">{{ picture.movie.title }}</a>
