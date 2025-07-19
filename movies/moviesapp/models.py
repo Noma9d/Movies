@@ -108,6 +108,8 @@ class Picture(models.Model):
     """Image file that can be referenced by many :class:`Record`s."""
 
     name = models.CharField(max_length=255)
+    unique_name = models.CharField(max_length=255, unique=True, blank=True)  # Unique name for the picture
+    # Use a custom upload path to avoid collisions
     image = models.ImageField(upload_to="images/", max_length=255)
 
     class Meta:
@@ -156,6 +158,8 @@ class Picture(models.Model):
 class TorrentFile(models.Model):
 
     name = models.CharField(max_length=255)
+    unique_name = models.CharField(max_length=255, unique=True, blank=True)  # Unique name for the torrent file
+    # Use a custom upload path to avoid collisions
     file_path = models.FileField(upload_to="torrents/", max_length=255)
 
     class Meta:

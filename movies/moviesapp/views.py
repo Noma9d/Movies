@@ -262,12 +262,12 @@ def add_movie(request) -> render:
                     },
                 )
 
-            (filename, relative_path) = result
+            (filename, unique_picture_filename, relative_path) = result
 
             
             # Создаем запись в БД
             picture, _ = Picture.objects.get_or_create(
-                name=filename, image=relative_path
+                name=filename, unique_name=unique_picture_filename, image=relative_path
             )
             picture_id = picture.id
         
@@ -292,11 +292,11 @@ def add_movie(request) -> render:
                     },
                 )
             
-            (filename, relative_path) = result
+            (filename, unique_torrent_filename, relative_path) = result
             
             # Создаем запись в БД
             torrent_file, _ = TorrentFile.objects.get_or_create(
-                name=filename, file_path=relative_path
+                name=filename, unique_name = unique_torrent_filename, file_path=relative_path
             )
             torrent_file_id = torrent_file.id
 
@@ -393,11 +393,11 @@ def edit_movie(request, movie_id: int) -> render:
                 messages.error(request, error_message)
                 return redirect("moviesapp:edit_movie", movie_id=movie.id)
 
-            (filename, relative_path) = result
+            (filename, unique_picture_name, relative_path) = result
 
             # Создаем или обновляем запись в БД
             picture_obj, _ = Picture.objects.get_or_create(
-                name=filename, image=relative_path
+                name=filename, unique_name = unique_picture_name, image=relative_path
             )
             movie.picture = picture_obj
             movie.save()
@@ -415,11 +415,11 @@ def edit_movie(request, movie_id: int) -> render:
                 messages.error(request, error_message)
                 return redirect("moviesapp:edit_movie", movie_id=movie.id)
 
-            (filename, relative_path) = result
+            (filename, unique_torrent_filename, relative_path) = result
 
             # Создаем или обновляем запись в БД
             torrent_file_obj, _ = TorrentFile.objects.get_or_create(
-                name=filename, file_path=relative_path
+                name=filename, unique_name=unique_torrent_filename, file_path=relative_path
             )
             movie.torrent_file = torrent_file_obj
             movie.save()
@@ -542,9 +542,9 @@ def add_picture(request) -> render:
             messages.error(request, error_message)
             return render(request, "moviesapp/add_picture.html")
         
-        (name, image_path) = result
+        (name, unique_image_name, image_path) = result
 
-        picture = Picture(name=name, image=image_path)
+        picture = Picture(name=name, unique_name = unique_image_name, image=image_path)
         picture.save()
         messages.success(request, "Изображение успешно добавлено!")
         return redirect("moviesapp:pictures_list")

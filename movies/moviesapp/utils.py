@@ -1,4 +1,5 @@
 import os
+import uuid
 from django.conf import settings as django_settings
 
 
@@ -26,11 +27,12 @@ def save_uploaded_file(file, file_ext_map, target_dir=None):
     upload_dir = os.path.join(django_settings.MEDIA_ROOT, target_dir)
     os.makedirs(upload_dir, exist_ok=True)
 
-    filepath = os.path.join(upload_dir, filename)
+    unique_filename = f"{uuid.uuid4().hex}{ext}"
+    filepath = os.path.join(upload_dir, unique_filename)
     with open(filepath, "wb+") as dest:
         for chunk in file.chunks():
             dest.write(chunk)
 
-    relative_path = os.path.join(target_dir, filename)
+    relative_path = os.path.join(target_dir, unique_filename)
 
-    return (filename, relative_path), None
+    return (filename, unique_filename, relative_path), None
