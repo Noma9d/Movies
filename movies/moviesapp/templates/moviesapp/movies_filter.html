@@ -35,12 +35,11 @@
                     <li class="mb-4">
                         <div class="d-flex align-items-start">
                             {% if movie.picture %}
-                                <img src="{{ movie.picture.image_path }}" class="me-3" style="max-width: 150px;" alt="{{ movie.title }}">
+                                <img src="{{ movie.picture.image_path.url }}" class="me-3" style="max-width: 150px;" alt="{{ movie.title }}">
                             {% endif %}
                             <div>
                                 <a href="{% url "moviesapp:movie_detail" movie.id %}"><strong>{{ movie.title }}</strong></a> 
-                                <br><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
-                                {{ movie.description }}<br>
+                                <br><small class="text-muted">Release date: </small><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
                                 <small class="text-muted">
                                     Genre: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
                                           {{ movie.genre }}

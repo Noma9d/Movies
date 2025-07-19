@@ -19,21 +19,20 @@ ul.list-unstyled, ul.list-unstyled li {
                     <li class="mb-4">
                         <div class="d-flex align-items-start">
                             {% if movie.picture %}
-                                <img src="{{ movie.picture.image_path.url }}" class="me-3" style="max-width: 250px;" alt="{{ movie.title }}">
+                                <img src="{{ movie.picture.image_path.url }}" class="me-3" style="width: 150px; height: 250px;" alt="{{ movie.title }}">
                             {% endif %}
-                            <div>
-                                <a href="{% url "moviesapp:movie_detail" movie.id %}"><strong>{{ movie.title }}</strong></a>
-                                <br><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
-                                {{ movie.description }}<br>
+                            <div style="max-width: 600px;">
+                                <a href="{% url 'moviesapp:movie_detail' movie.id %}"><strong>{{ movie.title }}</strong></a>
+                                <br><small class="text-muted">Release date: </small><a href="{% url 'moviesapp:movies_filter' 'year' movie.release_date %}"> {{ movie.release_date }}</a><br>
                                 <small class="text-muted">
-                                    Genre: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
+                                    Genre: <a href="{% url 'moviesapp:movies_filter' 'genre' movie.genre %}">
                                           {{ movie.genre }}
                                           </a> <br>
                                     Size: {{ movie.size }} Mb<br>
                                     {% if movie.actors %}
                                     Actor:
                                       {% for actor in movie.actors %}
-                                        <a href="{% url "moviesapp:movies_filter" "actor" actor %}">
+                                        <a href="{% url 'moviesapp:movies_filter' 'actor' actor %}">
                                           {{ actor }}
                                         </a>
                                       {% endfor %}<br>
@@ -42,7 +41,7 @@ ul.list-unstyled, ul.list-unstyled li {
                                       <div class="mt-2">
                                           <strong>Tag:</strong>
                                           {% for tag in movie.tags %}
-                                              <a href="{% url "moviesapp:movies_filter" "tag" tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
+                                              <a href="{% url 'moviesapp:movies_filter' 'tag' tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
                                           {% endfor %}
                                       </div>
                                   {% endif %}

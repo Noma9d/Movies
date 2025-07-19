@@ -7,47 +7,49 @@
 
 {% block content %}
 <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
-    <div class="card shadow p-4 mb-4 bg-white rounded" style="max-width: 500px; width: 100%;">
-        <div class="text-center">
+    <div class="card shadow p-4 mb-4 bg-white rounded" style="max-width: 800px; width: 100%;">
+        <div class="d-flex">
             {% if movie.picture %}
-                <img src="{{ movie.picture.image.url }}" class="me-3 mb-3" style="max-width: 350px;" alt="{{ movie.title }}">
+                <img src="{{ movie.picture.image.url }}" class="me-3 mb-3" style="width: 300px; height: 500px;" alt="{{ movie.title }}">
             {% endif %}
-            <h1 class="mb-3">{{ movie.title }}</h1>
-        </div>
-        <p><strong>Description:</strong> {{ movie.description }} <br>
-        <p><strong>Release date:</strong><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a></p>
-        <p><strong>Genre:</strong>
-            <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
-                {{ movie.genre }}
-                </a> </p>
-        <p><strong>Extension:</strong> {{ movie.extension }}</p>
-        <p><strong>Size:</strong> {{ movie.size }} Mb</p>
-        <p><strong>Download from url:</strong> <a href="{{ movie.download_url }}" class="btn btn-success" target="_blank">Download from url</a></p>
-        <p><strong>Download torrent</strong><a href="{{ movie.torrent_file.file_path.url }}" class="btn btn-success" target="_blank">torrent</a></p>
-        <p><strong>Actors:
-            {% if movie.actors %}
-              {% for actor in movie.actors.all %}
-                <a href="{% url "moviesapp:movies_filter" "actor" actor %}">
-                  {{ actor }}
-                </a>
-              {% endfor %}<br>
-            {% endif %}
-        </strong></p>
-        {% if movie.tags %}
-            <div class="mt-2">
-                <strong>Теги:</strong>
-                {% for tag in movie.tags.all %}
-                    <a href="{% url "moviesapp:movies_filter" "tag" tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
-                {% endfor %}
+            <div>
+                <h1 class="mb-3">{{ movie.title }}</h1>
+                <p><strong>Release date:</strong> <a href="{% url 'moviesapp:movies_filter' 'year' movie.release_date %}">{{ movie.release_date }}</a></p>
+                <p><strong>Genre:</strong> <a href="{% url 'moviesapp:movies_filter' 'genre' movie.genre %}">{{ movie.genre }}</a></p>
+                <p><strong>Extension:</strong> {{ movie.extension }}</p>
+                <p><strong>Size:</strong> {{ movie.size }} Mb</p>
+                <p><strong>Download from url:</strong> <a href="{{ movie.download_url }}" class="btn btn-success" target="_blank">Download from url</a></p>
+                <p><strong>Download torrent:</strong> <a href="{{ movie.torrent_file.file_path.url }}" class="btn btn-success" target="_blank">torrent</a></p>
+                <p><strong>Actors:</strong>
+                    {% if movie.actors %}
+                        {% for actor in movie.actors.all %}
+                            <a href="{% url 'moviesapp:movies_filter' 'actor' actor %}">{{ actor }}</a>
+                        {% endfor %}
+                    {% endif %}
+                </p>
+                {% if movie.tags %}
+                    <div class="mt-2">
+                        <strong>Tags:</strong>
+                        {% for tag in movie.tags.all %}
+                            <a href="{% url 'moviesapp:movies_filter' 'tag' tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
-        <div class="text-center mt-4 d-flex flex-column align-items-center gap-2">
-            <a href="{% url "moviesapp:main" %}" class="btn btn-primary mb-2">Back to list</a>
+        </div>
+        <div class="mt-4">
+            <p><strong>Description:</strong> {{ movie.description }}</p>
+        </div>
+        <div class="text-center mt-4">
+            {% if not user.is_authenticated %}
+                <p class="mt-4"><strong>Login to be able to edit or delete movies.</strong></p>
+            {% endif %}
+        </div>
+        <div class="text-center mt-4 d-flex justify-content-center gap-2">
+            <a href="{% url 'moviesapp:main' %}" class="btn btn-primary" style="width: 150px;">Back to list</a>
             {% if user.is_authenticated %}
-            <a href="{% url "moviesapp:edit_movie" movie.id %}" class="btn btn-warning mb-2">Edit</a>
-            <a href="{% url "moviesapp:delete_movie" movie.id %}" class="btn btn-danger">Delete</a>
-            {% else %}
-            <p class="text-muted">Log in to edit or delete movies.</p>
+                <a href="{% url 'moviesapp:edit_movie' movie.id %}" class="btn btn-warning" style="width: 150px;">Edit</a>
+                <a href="{% url 'moviesapp:delete_movie' movie.id %}" class="btn btn-danger" style="width: 150px;">Delete</a>
             {% endif %}
         </div>
     </div>

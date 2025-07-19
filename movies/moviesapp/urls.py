@@ -16,7 +16,6 @@ urlpatterns = [
     path("movies/<int:movie_id>/edit/", views.edit_movie, name="edit_movie"),
     path("movies/<int:movie_id>/delete/", views.delete_movie, name="delete_movie"),
     path("pictures/", views.pictures_list, name="pictures_list"),
-    # path("upload_image/", views.upload_file, name="upload_image"),
     path("pictures/<int:picture_id>/", views.picture_detail, name="picture_detail"),
     path(
         "pictures/<int:picture_id>/delete/", views.delete_picture, name="delete_picture"
@@ -30,8 +29,6 @@ urlpatterns = [
 
 """
     TODO:
-    Проверить редактирование фильмов и их удаление.
-    Сделать загрузку торрент файла по кнопке "Загрузить торрент".
     
     
 """

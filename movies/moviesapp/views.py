@@ -569,8 +569,8 @@ def main(request) -> render:
         formatted_movies.append(
             {
                 "id": movie.id,
-                "title": movie.title,
-                "description": movie.description,
+                "title": movie.title,  # Ограничиваем длину заголовка
+                "description": movie.description[:50] if len(movie.description) > 50 else movie.description,
                 "release_date": movie.release_date.strftime("%Y-%m-%d"),
                 "genre": movie.genre,
                 "extension": movie.extension,
@@ -589,7 +589,6 @@ def main(request) -> render:
     formatted_movies.sort(
         key=lambda x: x["id"], reverse=True
     )  # Сортируем по ID в обратном порядке, чтобы новые фильмы были первыми
-
     paginator = Paginator(formatted_movies, 10)  # Пагинация: 10 фильмов на страницу
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -653,7 +652,7 @@ def movies_filter(request, filter_type, value):
             {
                 "id": movie.id,
                 "title": movie.title,
-                "description": movie.description,
+                "description": movie.description[:50] if len(movie.description) > 50 else movie.description,
                 "release_date": movie.release_date.strftime("%Y-%m-%d"),
                 "genre": movie.genre,
                 "extension": movie.extension,
@@ -708,7 +707,7 @@ def search(request):
             {
                 "id": movie.id,
                 "title": movie.title,
-                "description": movie.description,
+                "description": movie.description[:50] if len(movie.description) > 50 else movie.description,
                 "release_date": movie.release_date.strftime("%Y-%m-%d"),
                 "genre": movie.genre,
                 "extension": movie.extension,
