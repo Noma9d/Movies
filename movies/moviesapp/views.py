@@ -348,6 +348,7 @@ def movie_detail(request, movie_id: int):
 def edit_movie(request, movie_id: int) -> render:
     movie = get_object_or_404(Record, pk=movie_id)
     old_picture = Picture.objects.filter(id=movie.picture_id).first() if movie.picture_id else None
+    old_torrent_file = TorrentFile.objects.filter(id=movie.torrent_file_id).first() if movie.torrent_file_id else None
     if request.method == "POST":
         movie.title = request.POST.get("title")
         movie.description = request.POST.get("description")
@@ -382,6 +383,10 @@ def edit_movie(request, movie_id: int) -> render:
         picture = request.FILES.get("image")
         if picture:
 
+            if old_picture:
+                old_picture.delete()  # Удаляем старое изображение, если оно есть
+                
+
             # Сохраняем загруженный файл
             result, error_message = save_uploaded_file(picture, FILE_EXT)
             if error_message:
@@ -400,6 +405,10 @@ def edit_movie(request, movie_id: int) -> render:
         # Обновление торрент файла
         torrent_file = request.FILES.get("torrent")
         if torrent_file:
+            # Удаляем старый торрент файл, если он есть
+            if old_torrent_file:
+                old_torrent_file.delete()
+
             # Сохраняем загруженный торрент файл
             result, error_message = save_uploaded_file(torrent_file, FILE_EXT)
             if error_message:
@@ -437,7 +446,6 @@ def edit_movie(request, movie_id: int) -> render:
             "tags": all_tags,
             "selected_actors": movie.actors.all(),
             "selected_tags": movie.tags.all(),
-            "picture_id": movie.picture_id,
             "image_path": old_picture.image if old_picture else None,
             "edit_mode": True,
             "movie_id": movie.id,
@@ -529,7 +537,7 @@ def add_picture(request) -> render:
     if request.method == "POST" and request.FILES.get("image"):
         image_file = request.FILES["image"]
         
-        result, error_message = save_uploaded_file(image_file, FILE_EXT)
+        result, error_message = save_uploaded_file(image_file, FILE_EXT, target_dir="movies/images")
         if error_message:
             messages.error(request, error_message)
             return render(request, "moviesapp/add_picture.html")

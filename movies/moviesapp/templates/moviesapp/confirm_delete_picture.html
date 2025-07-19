@@ -4,7 +4,7 @@
 <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
     <div class="card shadow p-4 mb-4 bg-white rounded text-center" style="max-width: 600px; width: 100%;">
         <h2 class="mb-3">Delete image</h2>
-        <img src="{{ picture.image }}" alt="{{ picture.name }}" class="mb-3" style="max-width: 100%; height: auto;">
+        <img src="{{ picture.image.url }}" alt="{{ picture.name }}" class="mb-3" style="max-width: 100%; height: auto;">
         <p>Are you sure you want to delete the image? <strong>{{ picture.name }}</strong>?</p>
         <form method="post">
             {% csrf_token %}

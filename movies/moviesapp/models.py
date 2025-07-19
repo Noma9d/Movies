@@ -138,6 +138,13 @@ class Picture(models.Model):
         self.save(update_fields=list(kwargs.keys()))
         return self
     
+    def delete(self, *args, **kwargs):
+        # Delete the image file from storage
+        if self.image and default_storage.exists(self.image.name):
+            self.image.delete(save=False)
+        # Then delete the Picture instance
+        super().delete(*args, **kwargs)
+    
 
 
 
@@ -158,6 +165,13 @@ class TorrentFile(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover
         return self.name
+    
+    def delete(self, *args, **kwargs):
+        # Delete the torrent file from storage
+        if self.file_path and default_storage.exists(self.file_path.name):
+            self.file_path.delete(save=False)
+        # Then delete the TorrentFile instance
+        super().delete(*args, **kwargs)
 
 
 
@@ -251,7 +265,7 @@ class Record(models.Model):
         return self
 
     def delete(self, *args, **kwargs):
-        self.picture.image.name
+
         # Удаляем файл постера, если есть
         if self.picture and self.picture.image:
             if default_storage.exists(self.picture.image.name):

@@ -2,7 +2,7 @@ import os
 from django.conf import settings as django_settings
 
 
-def save_uploaded_file(file, file_ext_map):
+def save_uploaded_file(file, file_ext_map, target_dir=None):
     """
     Сохраняет загруженный файл в нужную директорию, проверяет размер и расширение.
 
@@ -22,7 +22,8 @@ def save_uploaded_file(file, file_ext_map):
     if file.size > max_size:
         return None, f"Размер файла превышает {config['max_size_mb']} МБ"
 
-    upload_dir = os.path.join(django_settings.MEDIA_ROOT, config["dir"])
+    target_dir = target_dir or config["dir"]
+    upload_dir = os.path.join(django_settings.MEDIA_ROOT, target_dir)
     os.makedirs(upload_dir, exist_ok=True)
 
     filepath = os.path.join(upload_dir, filename)
@@ -30,6 +31,6 @@ def save_uploaded_file(file, file_ext_map):
         for chunk in file.chunks():
             dest.write(chunk)
 
-    relative_path = os.path.join(config["dir"], filename)
+    relative_path = os.path.join(target_dir, filename)
 
     return (filename, relative_path), None
