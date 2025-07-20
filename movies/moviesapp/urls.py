@@ -10,7 +10,7 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
-    path("movies/", views.movies, name="movies"),
+    # path("movies/", views.movies, name="movies"),
     path("movies/add_movie/", views.add_movie, name="add_movie"),
     path("movies/<int:movie_id>/", views.movie_detail, name="movie_detail"),
     path("movies/<int:movie_id>/edit/", views.edit_movie, name="edit_movie"),
@@ -30,5 +30,5 @@ urlpatterns = [
 
 """
     TODO:
-    сохранять структуру теста в поле описания
+    сделать загрузку нескольких скринлистов за один раз
 """

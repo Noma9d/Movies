@@ -102,9 +102,21 @@ def add_movie(request) -> render:
         tags_name = request.POST.getlist("tags")
         picture = request.FILES.get("image")
         torrent_file = request.FILES.get("torrent")
-        screenlist = request.FILES.get("screenlist")
+        screenlist = request.FILES.getlist("screenlist")
         all_actor = Actor.objects.all()
         all_tag = Tag.objects.all()
+
+        context = {
+            "title": title,
+            "description": description,
+            "year": year,
+            "genre": genre,
+            "extension": extension,
+            "size": size,
+            "download_url": download_url,
+            "actors": all_actor,
+            "tags": all_tag,
+        }
 
 
         if not title:
@@ -112,17 +124,7 @@ def add_movie(request) -> render:
             return render(
                 request,
                 "moviesapp/add_movie.html",
-                {
-                    "title": title,
-                    "description": description,
-                    "year": year,
-                    "genre": genre,
-                    "extension": extension,
-                    "size": size,
-                    "download_url": download_url,
-                    "actors": all_actor,
-                    "tags": all_tag,
-                },
+                context,
             )
         # Валидация года выпуска
         if not year:
@@ -130,17 +132,7 @@ def add_movie(request) -> render:
             return render(
                 request,
                 "moviesapp/add_movie.html",
-                {
-                    "title": title,
-                    "description": description,
-                    "genre": genre,
-                    "extension": extension,
-                    "size": size,
-                    "download_url": download_url,
-                    "year": year,
-                    "actors": all_actor,
-                    "tags": all_tag,
-                },
+                context,
             )
         try:
             # Преобразуем год в число и проверяем диапазон
@@ -155,17 +147,7 @@ def add_movie(request) -> render:
             return render(
                 request,
                 "moviesapp/add_movie.html",
-                {
-                    "title": title,
-                    "description": description,
-                    "genre": genre,
-                    "extension": extension,
-                    "size": size,
-                    "download_url": download_url,
-                    "year": year,  # Возвращаем введенный год
-                    "actors": all_actor,
-                    "tags": all_tag,
-                },
+                context,
             )
         if extension not in ["mp4", "mkv", "avi", "mov", "flv"]:
             messages.error(
@@ -175,51 +157,21 @@ def add_movie(request) -> render:
             return render(
                 request,
                 "moviesapp/add_movie.html",
-                {
-                    "title": title,
-                    "description": description,
-                    "year": year,
-                    "genre": genre,
-                    "extension": extension,
-                    "size": size,
-                    "download_url": download_url,
-                    "actors": all_actor,
-                    "tags": all_tag,
-                },
+                context,
             )
         if not size or not size.isdigit() or int(size) <= 0:
             messages.error(request, "Пожалуйста, укажите корректный размер файла")
             return render(
                 request,
                 "moviesapp/add_movie.html",
-                {
-                    "title": title,
-                    "description": description,
-                    "year": year,
-                    "genre": genre,
-                    "extension": extension,
-                    "size": size,
-                    "download_url": download_url,
-                    "actors": all_actor,
-                    "tags": all_tag,
-                },
+                context,
             )
         if not download_url:
             messages.error(request, "Пожалуйста, укажите ссылку для скачивания фильма")
             return render(
                 request,
                 "moviesapp/add_movie.html",
-                {
-                    "title": title,
-                    "description": description,
-                    "year": year,
-                    "genre": genre,
-                    "extension": extension,
-                    "size": size,
-                    "download_url": download_url,
-                    "actors": actors_name,
-                    "tags": tags_name,
-                },
+                context,
             )
         
         if not picture:
@@ -227,17 +179,7 @@ def add_movie(request) -> render:
             return render(
                 request,
                 "moviesapp/add_movie.html",
-                {
-                    "title": title,
-                    "description": description,
-                    "year": year,
-                    "genre": genre,
-                    "extension": extension,
-                    "size": size,
-                    "download_url": download_url,
-                    "actors": actors_name,
-                    "tags": tags_name,
-                },
+                context,
             )
         
         if picture:
@@ -245,21 +187,10 @@ def add_movie(request) -> render:
             # Сохраняем загруженный файл
             result, error_message = save_uploaded_file(picture, FILE_EXT)
             if error_message:
-                messages.error(request, error_message)
                 return render(
                     request,
                     "moviesapp/add_movie.html",
-                    {
-                        "title": title,
-                        "description": description,
-                        "year": year,
-                        "genre": genre,
-                        "extension": extension,
-                        "size": size,
-                        "download_url": download_url,
-                        "actors": actors_name,
-                        "tags": tags_name,
-                    },
+                    context,
                 )
 
             (filename, unique_picture_filename, relative_path) = result
@@ -279,17 +210,7 @@ def add_movie(request) -> render:
                 return render(
                     request,
                     "moviesapp/add_movie.html",
-                    {
-                        "title": title,
-                        "description": description,
-                        "year": year,
-                        "genre": genre,
-                        "extension": extension,
-                        "size": size,
-                        "download_url": download_url,
-                        "actors": actors_name,
-                        "tags": tags_name,
-                    },
+                    context,
                 )
             
             (filename, unique_torrent_filename, relative_path) = result
@@ -301,32 +222,25 @@ def add_movie(request) -> render:
             torrent_file_id = torrent_file.id
 
         if screenlist:
-            # Сохраняем загруженный скринлист
-            result, error_message = save_uploaded_file(screenlist, FILE_EXT, target_dir="movies/screenlists")
-            if error_message:
-                messages.error(request, error_message)
-                return render(
-                    request,
-                    "moviesapp/add_movie.html",
-                    {
-                        "title": title,
-                        "description": description,
-                        "year": year,
-                        "genre": genre,
-                        "extension": extension,
-                        "size": size,
-                        "download_url": download_url,
-                        "actors": actors_name,
-                        "tags": tags_name,
-                    },
-                )
-            (filename, unique_screenlist_filename, relative_path) = result
-            # Создаем запись в БД для скринлиста
-            screenlist, _ = ScreeList.objects.get_or_create(
-                name=filename, unique_name=unique_screenlist_filename, image_path=relative_path
-            )        
 
-            screenlist_id = screenlist.id
+            screenlist_ids = []
+            for screenlist_file in screenlist:
+                # Сохраняем загруженный скринлист
+                result, error_message = save_uploaded_file(screenlist_file, FILE_EXT, target_dir="movies/screenlists")
+                if error_message:
+                    return render(
+                        request,
+                        "moviesapp/add_movie.html",
+                        context,
+                    )
+                (filename, unique_screenlist_filename, relative_path) = result
+                # Создаем запись в БД для скринлиста
+                screenlist, _ = ScreeList.objects.get_or_create(
+                    name=filename, unique_name=unique_screenlist_filename, image_path=relative_path
+                )       
+                screenlist_ids.append(screenlist.id) 
+
+            
         
         # Создаем новый фильм
         new_movie = Record.objects.create(
@@ -339,8 +253,10 @@ def add_movie(request) -> render:
             download_url=download_url,
             picture_id=picture_id if picture else None,
             torrent_file_id=torrent_file_id if torrent_file else None,
-            screenlist_id=screenlist_id if screenlist else None,
         )
+
+        if screenlist_ids:
+            new_movie.screenlist.set(screenlist_ids)  # Устанавливаем связь со скринлистами
 
         # Добавляем существующих актеров и теги
         actors = []
@@ -365,7 +281,7 @@ def add_movie(request) -> render:
 
 def movie_detail(request, movie_id: int):
     movie = get_object_or_404(
-        Record.objects.select_related("picture", "torrent_file", "screenlist").prefetch_related("actors", "tags"),
+        Record.objects.select_related("picture", "torrent_file").prefetch_related("actors", "tags", "screenlist"),
         pk=movie_id,
     )
     return render(request, "moviesapp/movie_detail.html", {"movie": movie})
@@ -376,7 +292,7 @@ def edit_movie(request, movie_id: int) -> render:
     movie = get_object_or_404(Record, pk=movie_id)
     old_picture = Picture.objects.filter(id=movie.picture_id).first() if movie.picture_id else None
     old_torrent_file = TorrentFile.objects.filter(id=movie.torrent_file_id).first() if movie.torrent_file_id else None
-    old_screenlist = ScreeList.objects.filter(id=movie.screenlist_id).first() if movie.screenlist_id else None
+    old_screenlist = movie.screenlist.all()
     if request.method == "POST":
         movie.title = request.POST.get("title")
         movie.description = request.POST.get("description")
@@ -452,25 +368,29 @@ def edit_movie(request, movie_id: int) -> render:
             movie.torrent_file = torrent_file_obj
             movie.save()
 
-        screen_list = request.FILES.get("screenlist")
+        screen_list = request.FILES.getlist("screenlist")
         if screen_list:
-            # Удаляем старый скринлист, если он есть
-            if old_screenlist:
-                old_screenlist.delete()
 
-            # Сохраняем загруженный скринлист
-            result, error_message = save_uploaded_file(screen_list, FILE_EXT)
-            if error_message:
-                messages.error(request, error_message)
-                return redirect("moviesapp:edit_movie", movie_id=movie.id)
-            
-            (filename, unique_screenlist_filename, relative_path) = result
-            # Создаем или обновляем запись в БД для скринлиста
-            screenlist, _ = ScreeList.objects.get_or_create(
-                name=filename, unique_name=unique_screenlist_filename, image_path=relative_path
-            )
-            movie.screenlist = screenlist
-            movie.save()
+            screen_list_ids = []
+
+            for screenlist_file in old_screenlist:
+                screenlist_file.delete()  # Удаляем все старые скринлисты, если они есть
+
+            for screenlist in screen_list:
+                # Сохраняем загруженный скринлист
+                result, error_message = save_uploaded_file(screenlist, FILE_EXT, target_dir="movies/screenlists")
+                if error_message:
+                    messages.error(request, error_message)
+                    return redirect("moviesapp:edit_movie", movie_id=movie.id)
+
+                (filename, unique_screenlist_filename, relative_path) = result
+                # Создаем или обновляем запись в БД для скринлиста
+                screenlist, _ = ScreeList.objects.get_or_create(
+                    name=filename, unique_name=unique_screenlist_filename, image_path=relative_path
+                )
+                screen_list_ids.append(screenlist.id)
+
+            movie.screenlist.set(screen_list_ids)  # Устанавливаем связь со скринлистами
 
         return redirect("moviesapp:movie_detail", movie_id=movie.id)
 
@@ -495,7 +415,7 @@ def edit_movie(request, movie_id: int) -> render:
             "selected_actors": movie.actors.all(),
             "selected_tags": movie.tags.all(),
             "image_path": old_picture.image if old_picture else None,
-            "screenlist_path": old_screenlist.image_path if old_screenlist else None,
+            "screenlist_path": old_screenlist,
             "edit_mode": True,
             "movie_id": movie.id,
         },
@@ -664,7 +584,7 @@ def contact(request) -> render:
     return render(request, "moviesapp/contact.html")
 
 
-def movies(request):
+# def movies(request):
     movies_years = []
     movies_title = []
     movies_description = []
@@ -789,8 +709,8 @@ def search(request):
 
 def screenlist_detail(request, screenlist_id: int) -> render:
     screenlist = get_object_or_404(ScreeList, pk=screenlist_id)
-    image_path = screenlist.image_path
-    movie = Record.objects.filter(screenlist_id=screenlist.id).first()
+    image_path = screenlist.image_path # Для отладки, можно удалить позже
+    movie = screenlist.records.first()  # Получаем первый фильм, связанный со скринлистом
     data = {
         "screenlist": {
             "id": screenlist.id,

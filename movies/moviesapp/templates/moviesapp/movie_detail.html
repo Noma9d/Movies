@@ -42,11 +42,13 @@
         </div>
         <div class="mt-4">
             <h5>Screenlist:</h5>
-            {% if movie.screenlist %}
-                <a href="{% url "moviesapp:screenlist_detail" movie.screenlist.id %}">
-                    <img src="{{ movie.screenlist.image_path.url }}"
-                     alt="{{ movie.screenlist.name }}" class="img-fluid mb-3" style="width: 200px; height: 200px;">
+            {% if movie.screenlist.all %}
+                {% for screen in movie.screenlist.all %}
+                <a href="{% url "moviesapp:screenlist_detail" screen.id %}">
+                    <img src="{{ screen.image_path.url }}"
+                     alt="{{ screen.name }}" class="img-fluid mb-3" style="width: 200px; height: 200px;">
                 </a>
+                {% endfor %}
             {% else %}
                 <p>No screenlist available.</p>
             {% endif %}

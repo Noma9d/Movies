@@ -186,8 +186,8 @@ class ScreeList(models.Model):
     
     def delete(self, *args, **kwargs):
         # Delete the image file from storage
-        if self.image and default_storage.exists(self.image.name):
-            self.image.delete(save=False)
+        if self.image_path and default_storage.exists(self.image_path.name):
+            self.image_path.delete(save=False)
         # Then delete the Picture instance
         super().delete(*args, **kwargs)
 
@@ -282,9 +282,8 @@ class Record(models.Model):
         related_name="records",
     )
 
-    screenlist = models.ForeignKey(
+    screenlist = models.ManyToManyField(
         ScreeList,
-        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="records",
