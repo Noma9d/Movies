@@ -9,9 +9,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
 from datetime import date
-from django.http import Http404
-from django.db.models import Count, Q
+from django.http import Http404, FileResponse
+from django.db.models import Count, Q, F
 from .utils import save_uploaded_file
+from django.conf import settings as django_settings
+
 
 
 FILTERS = {
@@ -708,6 +710,7 @@ def search(request):
 
 
 def screenlist_detail(request, screenlist_id: int) -> render:
+
     screenlist = get_object_or_404(ScreeList, pk=screenlist_id)
     image_path = screenlist.image_path # Для отладки, можно удалить позже
     movie = screenlist.records.first()  # Получаем первый фильм, связанный со скринлистом
@@ -720,3 +723,27 @@ def screenlist_detail(request, screenlist_id: int) -> render:
         }
     }
     return render(request, "moviesapp/screenlist_detail.html", data)
+
+
+def download_record_torrent(request, record_id: int):
+    record = get_object_or_404(Record, pk=record_id)
+
+    if not record.torrent_file or not record.torrent_file.file_path:
+        return render(
+            request,
+            "moviesapp/error.html",
+        )
+
+    # Проверяем, что файл существует
+    if not os.path.exists(f"{django_settings.MEDIA_ROOT}" + "/" + f"{record.torrent_file.file_path}"):
+        raise Http404("Торрент-файл не найден")
+
+    # Увеличиваем счётчик
+    Record.objects.filter(pk=record.pk).update(download_count=F('download_count') + 1)
+
+    # Возвращаем торрент-файл
+    return FileResponse(
+        record.torrent_file.file_path.open('rb'),
+        as_attachment=True,
+        filename=record.torrent_file.name
+    )

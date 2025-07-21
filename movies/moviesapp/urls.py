@@ -26,9 +26,10 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path("movies/filter/<str:filter_type>/<str:value>", views.movies_filter, name="movies_filter"),
     path("screenlist/<int:screenlist_id>/", views.screenlist_detail, name="screenlist_detail"),
+    path("download_record_torrent/<int:record_id>/", views.download_record_torrent, name="download_record_torrent"),
 ]
 
 """
     TODO:
-    сделать загрузку нескольких скринлистов за один раз
+    
 """

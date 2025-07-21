@@ -1,0 +1,20 @@
+{% extends "moviesapp/base.html" %}
+{% load static %}
+
+{% block title %}File Not Found{% endblock %}
+
+{% block stylesheets %}
+{{ block.super }}
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="error-page">
+        <h1>Файл не найден</h1>
+        <p>Извините, запрошенный файл не найден или был удалён.</p>
+        <a href="{% url "moviesapp:index" %}">Вернуться на главную</a>
+    </div>
+{% endblock %}

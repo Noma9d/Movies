@@ -265,6 +265,7 @@ class Record(models.Model):
     size = models.PositiveBigIntegerField(help_text="File size in bytes")
     download_url = models.URLField(max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
+    download_count = models.PositiveIntegerField(default=0)
 
     torrent_file = models.ForeignKey(
         TorrentFile,
