@@ -17,66 +17,76 @@
   <div class="row">
     <div class="col-md-8 mx-auto">
 
-      <h1>
-        {% if filter_type == "tag" %}
-          Movies tagged "{{ value }}"
-        {% elif filter_type == "actor" %}
-          Movies with actor "{{ value }}"
-        {% elif filter_type == "year" %}
-          Movies released in {{ value }}
-        {% elif filter_type == "genre" %}
-          Movies in genre "{{ value }}"
-        {% endif %}
-      </h1>
+      <div class="body">
+        <div class="card-body">
 
-      <div class="col-md-8 mx-auto">
-            <ul class="list-unstyled">
-                {% for movie in movies %}
-                    <li class="mb-4">
-                        <div class="d-flex align-items-start">
-                            {% if movie.picture %}
-                                <img src="{{ movie.picture.image_path.url }}" class="me-3" style="width: 200px; height: 300px; object-fit: cover;" alt="{{ movie.title }}">
-                            {% endif %}
-                            <div>
-                                <a href="{% url "moviesapp:movie_detail" movie.id %}"><strong>{{ movie.title }}</strong></a> 
-                                <br><small class="text-muted">Release date: </small><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
-                                <small class="text-muted">
-                                    Genre: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
-                                          {{ movie.genre }}
-                                          </a> <br>
-                                    Size: {{ movie.size }} МБ<br>
-                                    {% if movie.actors %}
-                                        Actors:
-                                      {% for actor in movie.actors %}
-                                        <a href="{% url "moviesapp:movies_filter" "actor" actor %}">
-                                          {{ actor }}
-                                        </a>
-                                      {% endfor %}<br>
-                                    {% endif %}
-                                  {% if movie.tags %}
-                                      <div class="mt-2">
-                                          <strong>Теги:</strong>
-                                          {% for tag in movie.tags %}
-                                              <a href="{% url "moviesapp:movies_filter" "tag" tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
-                                          {% endfor %}
-                                      </div>
-                                  {% endif %}
-                                </small>
+          <h1>
+            {% if filter_type == "tag" %}
+              Movies tagged "{{ value }}"
+            {% elif filter_type == "actor" %}
+              Movies with actor "{{ value }}"
+            {% elif filter_type == "year" %}
+              Movies released in {{ value }}
+            {% elif filter_type == "genre" %}
+              Movies in genre "{{ value }}"
+            {% endif %}
+          </h1>
+
+          <ul class="list-unstyled">
+            {% for movie in movies %}
+              <li class="mb-4">
+                <div class="card shadow-sm p-3">
+                  <div class="card-body">
+                    <div class="d-flex align-items-start">
+                      {% if movie.picture %}
+                        <img src="{{ movie.picture.image_path.url }}" class="me-3" style="width: 200px; height: 300px; object-fit: cover;" alt="{{ movie.title }}">
+                      {% endif %}
+                      <div>
+                        <a href="{% url "moviesapp:movie_detail" movie.id %}"><strong>{{ movie.title }}</strong></a> 
+                        <br><small class="text-muted">Release date: </small><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
+                        <small class="text-muted">
+                          Genre: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
+                            {{ movie.genre }}
+                          </a> <br>
+                          Size: {{ movie.size }} МБ<br>
+                          {% if movie.actors %}
+                            Actors:
+                            {% for actor in movie.actors %}
+                              <a href="{% url "moviesapp:movies_filter" "actor" actor %}">
+                                {{ actor }}
+                              </a>
+                            {% endfor %}
+                            <br>
+                          {% endif %}
+                          {% if movie.tags %}
+                            <div class="mt-2">
+                              <strong>Теги:</strong>
+                              {% for tag in movie.tags %}
+                                <a href="{% url "moviesapp:movies_filter" "tag" tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
+                              {% endfor %}
                             </div>
-                        </div>
-                    </li>
-                {% empty %}
-                    <li>No movies found.</li>
-                {% endfor %}
-            </ul>
+                          {% endif %}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            {% empty %}
+              <li>No movies found.</li>
+            {% endfor %}
+          </ul>
+
+
         </div>
+      </div>
 
     </div>
   </div>
 </div>
+
 <nav aria-label="Page navigation">
   <ul class="pagination justify-content-center">
-    {# Кнопка "Previous" #}
     {% if page_obj.has_previous %}
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
@@ -89,7 +99,6 @@
       </li>
     {% endif %}
 
-    {# Номера страниц (сокращённый диапазон) #}
     {% for num in page_obj.paginator.page_range %}
       {% if num == page_obj.number %}
         <li class="page-item active">
@@ -100,7 +109,6 @@
       {% endif %}
     {% endfor %}
 
-    {# Кнопка "Next" #}
     {% if page_obj.has_next %}
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">

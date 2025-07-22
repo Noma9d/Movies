@@ -1,6 +1,6 @@
 {% extends "moviesapp/base.html" %}
 
-{% block title %}Movies{% endblock %}
+{% block title %}Search movie{% endblock %}
 
 
 {% block content %}
@@ -17,37 +17,39 @@ ul.list-unstyled, ul.list-unstyled li {
             <ul class="list-unstyled">
                 {% for movie in movies %}
                     <li class="mb-4">
+                      <div class="card shadow-sm p-3">
                         <div class="d-flex align-items-start">
                             {% if movie.picture %}
                                 <img src="{{ movie.picture.image_path.url }}" class="me-3" style="width: 200px; height: 300px; object-fit: cover;" alt="{{ movie.title }}">
                             {% endif %}
-                            <div>
-                                <a href="{% url "moviesapp:movie_detail" movie.id %}"><strong>{{ movie.title }}</strong></a>
-                                <br><small class="text-muted">Release date: </small><a href="{% url "moviesapp:movies_filter" "year" movie.release_date %}"> {{ movie.release_date }}</a><br>
+                            <div style="max-width: 600px;">
+                                <a href="{% url 'moviesapp:movie_detail' movie.id %}"><strong>{{ movie.title }}</strong></a>
+                                <br><small class="text-muted">Release date: </small><a href="{% url 'moviesapp:movies_filter' 'year' movie.release_date %}"> {{ movie.release_date }}</a><br>
                                 <small class="text-muted">
-                                    Genre: <a href="{% url "moviesapp:movies_filter" "genre" movie.genre %}">
+                                    Genre: <a href="{% url 'moviesapp:movies_filter' 'genre' movie.genre %}">
                                           {{ movie.genre }}
                                           </a> <br>
-                                    Size: {{ movie.size }} MB<br>
+                                    Size: {{ movie.size }} Mb<br>
                                     {% if movie.actors %}
-                                    Actors:
+                                    Actor:
                                       {% for actor in movie.actors %}
-                                        <a href="{% url "moviesapp:movies_filter" "actor" actor %}">
+                                        <a href="{% url 'moviesapp:movies_filter' 'actor' actor %}">
                                           {{ actor }}
                                         </a>
                                       {% endfor %}<br>
                                     {% endif %}
                                   {% if movie.tags %}
                                       <div class="mt-2">
-                                          <strong>Tags:</strong>
+                                          <strong>Tag:</strong>
                                           {% for tag in movie.tags %}
-                                              <a href="{% url "moviesapp:movies_filter" "tag" tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
+                                              <a href="{% url 'moviesapp:movies_filter' 'tag' tag %}" class="badge bg-secondary me-1">{{ tag }}</a>
                                           {% endfor %}
                                       </div>
                                   {% endif %}
                                 </small>
                             </div>
                         </div>
+                      </div>
                     </li>
                 {% empty %}
                     <li>No movies found.</li>
@@ -61,7 +63,7 @@ ul.list-unstyled, ul.list-unstyled li {
     {# Кнопка "Previous" #}
     {% if page_obj.has_previous %}
       <li class="page-item">
-        <a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
           <span aria-hidden="true">&laquo; Previous</span>
         </a>
       </li>
@@ -78,14 +80,14 @@ ul.list-unstyled, ul.list-unstyled li {
           <span class="page-link">{{ num }} <span class="sr-only">(current)</span></span>
         </li>
       {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-        <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
       {% endif %}
     {% endfor %}
 
     {# Кнопка "Next" #}
     {% if page_obj.has_next %}
       <li class="page-item">
-        <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
           <span aria-hidden="true">Next &raquo;</span>
         </a>
       </li>

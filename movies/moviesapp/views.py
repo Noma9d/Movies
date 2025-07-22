@@ -280,7 +280,7 @@ def add_movie(request) -> render:
     # Получаем список всех актеров и тегов для формы
     actors = Actor.objects.all()
     tags = Tag.objects.all()
-    
+
     # Получаем список всех жанров для формы
     data = {
         "actors": actors,
@@ -307,6 +307,7 @@ def edit_movie(request, movie_id: int) -> render:
     old_picture = Picture.objects.filter(id=movie.picture_id).first() if movie.picture_id else None
     old_torrent_file = TorrentFile.objects.filter(id=movie.torrent_file_id).first() if movie.torrent_file_id else None
     old_screenlist = movie.screenlist.all()
+    genre_list = Genre.objects.all()
     if request.method == "POST":
         movie.title = request.POST.get("title")
         movie.description = request.POST.get("description")
@@ -413,10 +414,7 @@ def edit_movie(request, movie_id: int) -> render:
     all_actors = Actor.objects.all()
     all_tags = Tag.objects.all()
 
-    return render(
-        request,
-        "moviesapp/add_movie.html",
-        {
+    data = {
             "title": movie.title,
             "description": movie.description,
             "year": movie.release_date.year if movie.release_date else "",
@@ -432,7 +430,13 @@ def edit_movie(request, movie_id: int) -> render:
             "screenlist_path": old_screenlist,
             "edit_mode": True,
             "movie_id": movie.id,
-        },
+            "genre_list": genre_list,
+        }
+
+    return render(
+        request,
+        "moviesapp/add_movie.html",
+        data,
     )
 
 
