@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.templatetags.static import static
-from .models import Record, Tag, Actor, Picture, TorrentFile, ScreeList
+from .models import Record, Tag, Actor, Picture, TorrentFile, ScreeList, Genre
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -92,6 +92,9 @@ def logout_view(request):
 
 @login_required
 def add_movie(request) -> render:
+
+    genre_list = Genre.objects.all()
+
     if request.method == "POST":
         title = request.POST.get("title")
         description = request.POST.get("description")
@@ -116,6 +119,7 @@ def add_movie(request) -> render:
             "extension": extension,
             "size": size,
             "download_url": download_url,
+            "genre_list": genre_list,
             "actors": all_actor,
             "tags": all_tag,
         }
@@ -276,8 +280,16 @@ def add_movie(request) -> render:
     # Получаем список всех актеров и тегов для формы
     actors = Actor.objects.all()
     tags = Tag.objects.all()
+    
+    # Получаем список всех жанров для формы
+    data = {
+        "actors": actors,
+        "tags": tags,
+        "genre_list": genre_list,
+    }
+
     # Возвращаем все необходимые поля формы
-    return render(request, "moviesapp/add_movie.html", {"actors": actors, "tags": tags})
+    return render(request, "moviesapp/add_movie.html", data)
 
 
 

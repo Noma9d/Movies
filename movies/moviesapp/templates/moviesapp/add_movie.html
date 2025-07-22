@@ -71,14 +71,9 @@
         <div class="form-group">
             <label for="genre">Genre:</label>
             <select class="form-control" id="genre" name="genre" required>
-                <option value="action" {% if genre == 'action' %}selected{% endif %}>Action movie</option>
-                <option value="comedy" {% if genre == 'comedy' %}selected{% endif %}>Comedy</option>
-                <option value="drama" {% if genre == 'drama' %}selected{% endif %}>Drama</option>
-                <option value="fantasy" {% if genre == 'fantasy' %}selected{% endif %}>Fantasy</option>
-                <option value="horror" {% if genre == 'horror' %}selected{% endif %}>Horror</option>
-                <option value="animation" {% if genre == 'animation' %}selected{% endif %}>Animation</option>
-                <option value="documentary" {% if genre == 'documentary' %}selected{% endif %}>Documentary</option>
-                <option value="other" {% if genre == 'other' %}selected{% endif %}>Other</option>
+                {% for genre in genre_list %}
+                    <option value="{{ genre.name }}" {% if genre.name == selected_genre %}selected{% endif %}>{{ genre.name }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="form-group">

@@ -57,6 +57,45 @@ class Tag(models.Model):
         self.save(update_fields=list(kwargs.keys()))
         return self
 
+# -------------------------------------------------
+# Genre Model
+# -------------------------------------------------
+
+
+class Genre(models.Model):
+    """Light-weight label for grouping :class:`Record` instances by genre."""
+
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Genre"
+        verbose_name_plural = "Genres"
+
+    def __str__(self) -> str:  # pragma: no cover
+        return self.name
+
+    # --- CRUD convenience wrappers ---
+    @classmethod
+    def get_all(cls):
+        return cls.objects.all()
+
+    @classmethod
+    def get_by_id(cls, genre_id: int):
+        return cls.objects.filter(id=genre_id).first()
+
+    @classmethod
+    def get_by_name(cls, name: str):
+        return cls.objects.filter(name=name).first()
+
+    def update(self, **kwargs):
+        for field, value in kwargs.items():
+            setattr(self, field, value)
+        self.save(update_fields=list(kwargs.keys()))
+        return self
+
+
+
 
 # -------------------------------------------------
 # Actor Model

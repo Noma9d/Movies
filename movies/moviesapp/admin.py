@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import  Picture, ScreeList, TorrentFile, Tag, Actor, Record
+from .models import  Picture, ScreeList, TorrentFile, Tag, Actor, Record, Genre
 # Register your models here.
 
 
@@ -9,3 +9,4 @@ admin.site.register(TorrentFile)
 admin.site.register(Tag)
 admin.site.register(Actor)
 admin.site.register(Record)
+admin.site.register(Genre)
