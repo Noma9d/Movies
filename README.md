@@ -3,6 +3,7 @@
 ![Python](https://img.shields.io/badge/Python-3.12-blue.svg)
 ![Django](https://img.shields.io/badge/Django-5.0-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Docker](https://img.shields.io/badge/Docker-blue.svg)
 
 A web application for creating and managing a movie catalog with the ability to add descriptions, posters, tags, and actor information.
 
