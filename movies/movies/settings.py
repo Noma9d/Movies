@@ -16,7 +16,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 from dotenv import load_dotenv
-load_dotenv(BASE_DIR / ".env")
+load_dotenv(BASE_DIR.parent / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -29,7 +29,10 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = os.environ.get("DJANGO_DEBUG")
 
 # Добавляем домен или IP-адрес сервера
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(',')
+
+
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1").split(',')
+
 
 # SSL settings based on DEBUG mode
 SECURE_SSL_REDIRECT = not DEBUG
